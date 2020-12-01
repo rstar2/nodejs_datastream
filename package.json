@@ -1,0 +1,32 @@
+{
+  "name": "datastream-chart",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^11.0.1",
+    "@rollup/plugin-node-resolve": "^7.0.0",
+    "eslint": "^7.13.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.1.2",
+    "rollup": "^1.16.2",
+    "rollup-plugin-terser": "^5.0.0",
+    "serve": "^11.0.2"
+  },
+  "dependencies": {
+    "date-fns": "^1.30.1",
+    "deepmerge": "^4.2.2",
+    "highcharts": "^8.2.2",
+    "highcharts-export-server": "^2.0.28",
+    "jsdom": "^16.4.0",
+    "plotly": "^1.0.6"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c -w",
+    "dev": "npm-run-all --parallel start watch",
+    "start": "serve public",
+    "pkg:convert": "pkg cli/convert.js --targets 'linux,win'",
+    "pkg:export": "pkg cli/export.js --targets 'linux,win' --out-path dist -o chart",
+    "pkg": "npm-run-all --parallel pkg:convert pkg:plot"
+  }
+}

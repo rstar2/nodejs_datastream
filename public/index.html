@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head lang='en'>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width'>
+	<title>rollup-starter-app</title>
+
+	<style>
+		body {
+			font-family: 'Helvetica Neue', Arial, sans-serif;
+			color: #333;
+			font-weight: 300;
+		}
+    </style>
+
+    <!-- For Highcharts chart -->
+    <script src="js/lib/highcharts/highcharts.js"></script>
+    <script src="js/lib/highcharts/exporting.js"></script>
+    <!-- If added this module then the export will be done in the browser/offline,
+        no need for Highcharts (or custom one) server
+        If offline PDF export is needed the 'jspdf' and 'svg2pdf' scripts 
+        have to be loaded also, otherwise they are fetched on demand from Highcharts server
+    -->
+    <!-- <script src="js/lib/highcharts/offline-exporting.js"></script> -->
+    <!-- <script src="js/lib/jspdf.js"></script>
+    <script src="js/lib/svg2pdf.js"></script> -->
+
+    <!-- <script src="js/lib/highcharts/export-data.js"></script> -->
+    <!-- <script src="js/lib/highcharts/boost.js"></script> -->
+    <!-- <script src="js/lib/highcharts/data.js"></script> -->
+    <!-- <script src="js/lib/highcharts/drag-panes.js"></script> -->
+
+</head>
+<body>
+    <h1>Time series</h1>
+
+    <input type="file" id="fileUpload" accept="text/*" style="display:none">
+    <button id="fileSelect">Upload Data</button>
+
+    <div id='myHighcharts' style="width: 100%; height: 100%;">
+        <!-- Highcharts chart will be drawn inside this DIV -->
+    </div>
+
+	<script src='js/bundle.js'></script>
+</body>
+</html>

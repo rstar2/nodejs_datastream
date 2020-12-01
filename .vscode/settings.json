@@ -1,0 +1,11 @@
+{
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#342A37",
+        "titleBar.activeBackground": "#493B4D",
+        "titleBar.activeForeground": "#FBFAFB"
+    },
+    "cSpell.words": [
+        "Highcharts",
+        "plotly"
+    ]
+}
