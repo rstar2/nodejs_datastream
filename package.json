@@ -26,7 +26,7 @@
     "dev": "npm-run-all --parallel start watch",
     "start": "serve public",
     "pkg:convert": "pkg cli/convert.js --targets 'linux,win'",
-    "pkg:export": "pkg cli/export.js --targets 'linux,win' --out-path dist -o chart",
+    "pkg:chart": "pkg cli/chart.js --targets 'linux,win' --out-path dist",
     "pkg": "npm-run-all --parallel pkg:convert pkg:plot"
   }
 }
