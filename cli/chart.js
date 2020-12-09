@@ -164,8 +164,7 @@ async function getChartData(fileIn) {
       },
       function onFinish(error) {
         if (error) {
-          console.error('');
-          process.exit(1);
+          return reject(error);
         }
 
         resolve(chartData);
@@ -186,7 +185,11 @@ function exportChart(chartData, fileOut) {
   fs.writeFileSync(fileOut, svg);
 }
 
-main();
+// start the script
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
 
 // const { implSymbol } = require('jsdom/lib/jsdom/living/generated/utils.js');
 // download(window, 'test.out', 'Hello');

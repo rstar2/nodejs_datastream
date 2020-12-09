@@ -1,6 +1,10 @@
-/* globals Highcharts:false */
-
 import merge from 'deepmerge';
+import Highcharts from 'highcharts';
+// Load the exporting module.
+import Exporting from 'highcharts/modules/exporting';
+
+// Initialize exporting module.
+Exporting(Highcharts);
 
 let currentChart = null;
 
@@ -54,6 +58,9 @@ export function update(traces, extraOpts = {}) {
   ]);
   currentChart = Highcharts.chart('myHighcharts', opts);
 
-  // export it tom window, so that it could be used from external scripts, or like it is done now form jsdom
+  // export to window, so that they could be used from external scripts, or like it is done now form jsdom (it don't support ES modules)
   window.highchartsChart = currentChart;
 }
+
+// export to window, so that they could be used from external scripts, or like it is done now form jsdom (it don't support ES modules)
+window.Highcharts = Highcharts;

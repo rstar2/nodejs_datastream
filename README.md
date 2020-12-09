@@ -1,4 +1,4 @@
-## time-trace-chart
+# Datastream chart creation
 
 ## Getting started
 
@@ -15,7 +15,7 @@ cd my-app
 npm install
 ```
 
-The `public/index.html` file contains a `<script src='bundle.js'>` tag, which means we need to create `public/bundle.js`. The `rollup.config.js` file tells Rollup how to create this bundle, starting with `src/main.js` and including all its dependencies, including [date-fns](https://date-fns.org).
+The `public/index.html` file contains a `<script src='bundle.js'>` tag, which means we need to create `public/bundle.js`. The `rollup.config.js` file tells Rollup how to create this bundle, starting with `src/main.js` and including all its dependencies, .
 
 `npm run build` builds the application to `public/bundle.js`, along with a sourcemap file for debugging.
 
@@ -28,3 +28,12 @@ The `public/index.html` file contains a `<script src='bundle.js'>` tag, which me
 ## License
 
 [MIT](LICENSE).
+
+---
+
+## TODO
+
+1. Add strategy for filtering the "initial" and "back" points (strategy or middleware pattern, or even using RxJS)
+1. ~~Use highcharts NPM module~~
+1. ~~Split Rollup bundles to vendor and app/local~~
+    > Technically  not possible until JSDOM supports ES modules

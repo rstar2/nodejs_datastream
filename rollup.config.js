@@ -6,16 +6,29 @@ import { terser } from 'rollup-plugin-terser';
 // `npm run dev` -> `production` is false
 const production = !process.env.ROLLUP_WATCH;
 
+const outputESM = false;
+
 export default {
   input: 'src/main.js',
   output: {
-    file: 'public/js/bundle.js',
-    format: 'iife', // immediately-invoked function expression — suitable for <script> tags
-    sourcemap: true,
+    dir: 'public/js',
+
+    // IIFE (immediately-invoked function expression) - suitable for <script> tags
+    //     and only supported for single bundle, NOT when Code-splitting builds
+    // ESM (Es modules) suitable for <script type="module"> tags
+    format: outputESM ? 'esm' : 'iife',
+
+    sourcemap: production && true,
   },
+  // code-splitting is NOT allowed for single bundle
+  manualChunks: outputESM
+    ? {
+        vendor: ['node_modules/highcharts/highcharts.js'],
+      }
+    : undefined,
   plugins: [
-    resolve(), // tells Rollup how to find date-fns in node_modules
-    commonjs(), // converts date-fns to ES modules
+    resolve(), // find and resolve any Node commonjs module
+    commonjs(), // converts to ES modules
     production && terser(), // minify, but only in production,
   ],
 };

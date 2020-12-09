@@ -14,8 +14,8 @@
     </style>
 
     <!-- For Highcharts chart -->
-    <script src="js/lib/highcharts/highcharts.js"></script>
-    <script src="js/lib/highcharts/exporting.js"></script>
+    <!-- <script src="js/lib/highcharts/highcharts.js"></script>
+    <script src="js/lib/highcharts/exporting.js"></script> -->
     <!-- If added this module then the export will be done in the browser/offline,
         no need for Highcharts (or custom one) server
         If offline PDF export is needed the 'jspdf' and 'svg2pdf' scripts 
@@ -41,6 +41,11 @@
         <!-- Highcharts chart will be drawn inside this DIV -->
     </div>
 
-	<script src='js/bundle.js'></script>
+    <!-- If Rollup bundled it as one IIFE bundle-->
+    <script src='js/main.js'></script>
+    
+    <!-- If Rollup  code-splitted to multiple ES-modules -->
+    <!-- <script type= "module" src='js/main.js'></script> -->
+
 </body>
 </html>
