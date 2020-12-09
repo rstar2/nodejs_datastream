@@ -16,15 +16,14 @@
   "dependencies": {
     "deepmerge": "^4.2.2",
     "highcharts": "^8.2.2",
-    "jsdom": "^16.4.0"
+    "jsdom": "^16.4.0",
+    "klaw-sync": "^6.0.0"
   },
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -c -w",
     "dev": "npm-run-all --parallel start watch",
     "start": "serve public",
-    "pkg:convert": "pkg cli/convert.js --targets 'linux,win'",
-    "pkg:chart": "pkg cli/chart.js --targets 'linux,win' --out-path dist",
-    "pkg": "npm-run-all --parallel pkg:convert pkg:plot"
+    "pkg": "pkg cli/chart.js --targets 'linux' --out-path dist --config pkg.json"
   }
 }

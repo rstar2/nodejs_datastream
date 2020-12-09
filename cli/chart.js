@@ -11,7 +11,8 @@ const jsdom = require('jsdom');
 let window;
 
 async function main() {
-  await setupJsdom(path.resolve(__dirname, '../public/index.html'));
+  // NOTE: For pkg auto-detecting-assets path.join() MUST be used, not path.resolve()
+  await setupJsdom(path.join(__dirname, '../public/index.html'));
 
   await new Promise((resolve) => (window.onload = resolve));
 
@@ -185,12 +186,6 @@ function exportChart(chartData, fileOut) {
   fs.writeFileSync(fileOut, svg);
 }
 
-// start the script
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
-
 // const { implSymbol } = require('jsdom/lib/jsdom/living/generated/utils.js');
 // download(window, 'test.out', 'Hello');
 // function download(window, filename, text) {
@@ -207,3 +202,9 @@ main().catch((error) => {
 
 //   console.log(blob[implSymbol]._buffer);
 // }
+
+// start the script
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

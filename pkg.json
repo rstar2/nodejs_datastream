@@ -1,0 +1,7 @@
+{
+  "_comment:_assets": "Add all if JavaScript files loaded in index.html are from local filesystem",
+  "_assets": "public/**/*",
+
+  "_comment:assets": "Add only those needed currentyl in index.html",
+  "assets": ["public/index.html", "public/js/main.js"]
+}

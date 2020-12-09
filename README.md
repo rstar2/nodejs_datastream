@@ -15,9 +15,9 @@ cd my-app
 npm install
 ```
 
-The `public/index.html` file contains a `<script src='bundle.js'>` tag, which means we need to create `public/bundle.js`. The `rollup.config.js` file tells Rollup how to create this bundle, starting with `src/main.js` and including all its dependencies, .
+The `public/index.html` file contains a `<script src='main.js'>` tag, which means we need to create `public/main.js`. The `rollup.config.js` file tells Rollup how to create this bundle, starting with `src/main.js` and including all its dependencies, .
 
-`npm run build` builds the application to `public/bundle.js`, along with a sourcemap file for debugging.
+`npm run build` builds the application to `public/main.js`, along with a sourcemap file for debugging.
 
 `npm start` launches a server, using [serve](https://github.com/zeit/serve). Navigate to [localhost:3000](http://localhost:3000).
 
