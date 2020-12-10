@@ -39,7 +39,18 @@ async function setupJsdom(fileHtml) {
   const virtualConsole = new jsdom.VirtualConsole();
   virtualConsole.sendTo(console);
 
-  const dom = await jsdom.JSDOM.fromFile(fileHtml, {
+  // NOTE: cannot use the easier jsdom.JSDOM.fromFile() API
+  // as it internally uses the "promise" based "fs module (e.g.  const fs = require("fs").promises)
+  // BUT pkg cannot work with it - there's a bug https://github.com/vercel/pkg/issues/958
+  //   const dom = await jsdom.JSDOM.fromFile(fileHtml, {
+  //     runScripts: 'dangerously',
+  //     resources: 'usable',
+  //     //   resources: resourceLoader,
+  //     virtualConsole,
+  //   });
+
+  const dom = new jsdom.JSDOM(fs.readFileSync(fileHtml), {
+    url: new URL('file:' + path.resolve(fileHtml)),
     runScripts: 'dangerously',
     resources: 'usable',
     //   resources: resourceLoader,

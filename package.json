@@ -24,6 +24,6 @@
     "watch": "rollup -c -w",
     "dev": "npm-run-all --parallel start watch",
     "start": "serve public",
-    "pkg": "pkg cli/chart.js --targets 'linux' --out-path dist --config pkg.json"
+    "pkg": "pkg cli/chart.js --targets 'linux,win' --out-path dist --config pkg.json"
   }
 }

@@ -37,3 +37,6 @@ The `public/index.html` file contains a `<script src='main.js'>` tag, which mean
 1. ~~Use highcharts NPM module~~
 1. ~~Split Rollup bundles to vendor and app/local~~
     > Technically  not possible until JSDOM supports ES modules
+1. Use a GitHub-Action for running "npm run pkg" and creating a new "release"
+1. Create a new "dev" Git branch that when merged into main will trigger the new GitHub-Action
+   
