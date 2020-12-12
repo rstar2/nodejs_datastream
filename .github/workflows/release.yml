@@ -33,6 +33,12 @@ jobs:
 
       # Install the project's deendancies and the global 'pkg' npm module   
       - name: Prepare
+        env:
+          # This is need for installin global packages as NPM oytherwise will put them in
+          # /usr/local/lib/node_modules where the local user has no access
+          # Other solutions are to either use 'sudo npm install -g pkg' or
+          # change permissions before that 'sudo chown -R $USER /usr/local/lib/node_modules'
+          NPM_CONFIG_PREFIX: "~/.npm-global"
         run: |
           npm install
           npm install -g pkg    
