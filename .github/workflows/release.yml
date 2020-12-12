@@ -23,22 +23,23 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Logs
+      - name: Echo
         run: |
-          echo GitHub Tag ${{ github.ref }}
+          echo Created new Tag ${{ github.ref }}
 
-
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      # Checks-out repository under $GITHUB_WORKSPACE, so the job can access it
       - name: Checkout code
-        id: checkout
         uses: actions/checkout@v2
               
-      # This would actually build your project, using zip for an example artifact
-      - name: Package 
-        id: package
+      # This would actually build package (create executables) and zip them
+      # in chart-vXXX.zip file which is later uploaded as release artifact
+      # Note in 'zip --junk-paths chart-${{ github.ref }} dist/**'
+      # the option '--junk-paths' will not create the folder 'dist' but will just zip its contents
+      - name: Build and package executables - create a ZIP latest
         run: |
-          zip --junk-paths my-artifact README.md
-          ls
+          npm run build
+          npm run pkg
+          zip --junk-paths chart dist/**
 
       - name: Create Release
         id: create_release
@@ -48,7 +49,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: |
+          body: |    # It's better to use body_path, which actually will dynamically use the contents of the specified file, body is not so "dynamic"
             Changes in this Release
             - First Change
             - Second Change
@@ -62,6 +63,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./my-artifact.zip
-          asset_name: my-artifact.zip
+          asset_path: ./chart.zip
+          asset_name: chart-${{ github.ref }}.zip
           asset_content_type: application/zip
