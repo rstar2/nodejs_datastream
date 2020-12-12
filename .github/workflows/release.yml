@@ -34,8 +34,8 @@ jobs:
       # Install the project's deendancies and the global 'pkg' npm module   
       - name: Prepare
         env:
-          # This is need for installin global packages as NPM oytherwise will put them in
-          # /usr/local/lib/node_modules where the local user has no access
+          # This is needed for installing global NPM packages as otherwise NPM will put them in
+          # /usr/local/lib/node_modules where the local user has no access.
           # Other solutions are to either use 'sudo npm install -g pkg' or
           # change permissions before that 'sudo chown -R $USER /usr/local/lib/node_modules'
           NPM_CONFIG_PREFIX: "~/.npm-global"
@@ -44,10 +44,14 @@ jobs:
           npm install -g pkg    
               
       # This would actually build package (create executables) and zip them
-      # in chart-vXXX.zip file which is later uploaded as release artifact
+      # in chart-vXXX.zip file which is later uploaded as release artifact.
       # Note in 'zip --junk-paths chart-${{ github.ref }} dist/**'
       # the option '--junk-paths' will not create the folder 'dist' but will just zip its contents
       - name: Build and package executables - create a ZIP latest
+        env:
+          # This is needed for if installing global NPM packages is done in this folder
+          # as in the 'Prepare' step
+          NPM_CONFIG_PREFIX: "~/.npm-global"
         run: |
           npm run build
           npm run pkg
