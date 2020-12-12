@@ -4,9 +4,8 @@ name: CI
 
 # Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
+  # Triggers the workflow on push
   push:
-    branches: [ main ]
     # Sequence of patterns matched against refs/tags
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
@@ -24,6 +23,11 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: Logs
+        run: |
+          echo GitHub Tag ${{ github.ref }}
+
+
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout code
         id: checkout
@@ -34,6 +38,7 @@ jobs:
         id: package
         run: |
           zip --junk-paths my-artifact README.md
+          ls
 
       - name: Create Release
         id: create_release
