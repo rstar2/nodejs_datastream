@@ -5,6 +5,9 @@ public/bundle*
 
 dist
 
-data/*.xlsx
-data/*.out
-data/*.svg
+data/**/*.xlsx
+data/**/*.out
+data/**/*.svg
+data/**/*.png
+data/**/*.jpg
+data/**/*.jpeg

@@ -33,10 +33,16 @@ The `public/index.html` file contains a `<script src='main.js'>` tag, which mean
 
 ## TODO
 
-1. Add strategy for filtering the "initial" and "back" points (strategy or middleware pattern, or even using RxJS)
+1. ~~CLI - Create arguments parsing (format, strategy, ...). Add help message~~
+1. Support multiple datastream files
+1. ~~Convert output SVG to PNG or JPEG format~~
+1. Add filter strategies:  skip the "initial" and later "backwards" points (strategy or middleware pattern, or even using RxJS)
 1. ~~Use highcharts NPM module~~
 1. ~~Split Rollup bundles to vendor and app/local~~
     > Technically  not possible until JSDOM supports ES modules
 1. Use a GitHub-Action for running "npm run pkg" and creating a new "release"
 1. Create a new "dev" Git branch that when merged into main will trigger the new GitHub-Action
-   
+1. Error cases
+    1. ~~CLI misusage~~
+    1. Invalid datastream file structure
+    1. Charting failure (inside jsdom/highcharts/image-conversion)

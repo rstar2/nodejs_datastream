@@ -1,10 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
-const { getFileIn } = require('../lib/args');
-const { convertFile } = require('../lib/convert');
+const sharp = require('sharp');
 
-const fileIn = getFileIn();
+const { fileIn, strategy, format } = require('../lib/args');
+const { convertFile } = require('../lib/convert');
+const { STRATEGY_TYPE, FORMAT_TYPE } = require('../lib/util');
 
 const jsdom = require('jsdom');
 
@@ -19,7 +20,7 @@ async function main() {
   setupHighcharts();
 
   const chartData = await getChartData(fileIn);
-  exportChart(chartData, fileIn + '.svg');
+  await exportChart(chartData);
 }
 
 async function setupJsdom(fileHtml) {
@@ -185,7 +186,7 @@ async function getChartData(fileIn) {
   });
 }
 
-function exportChart(chartData, fileOut) {
+async function exportChart(chartData) {
   // 1. draw the chart
   window.chart.update([chartData]);
   // console.log(window.innerWidth, window.innerHeight);
@@ -194,7 +195,24 @@ function exportChart(chartData, fileOut) {
   const svg = window.highchartsChart.getSVG();
   //   const svg = window.highchartsChart.sanitizeSVG();
 
-  fs.writeFileSync(fileOut, svg);
+  await convertAndSave(svg);
+}
+
+async function convertAndSave(svg) {
+  console.log(`Save in chart in '${format.toUpperCase()}' format`);
+  const fileOut = fileIn + '.' + format;
+  if (format === FORMAT_TYPE.SVG) {
+    fs.writeFileSync(fileOut, svg);
+  } else {
+    const buffer = Buffer.from(svg, 'utf8');
+    let sharping = sharp(buffer);
+
+    if (format === FORMAT_TYPE.PNG) sharping = sharping.png();
+    else if (format === FORMAT_TYPE.JPEG) sharping = sharping.jpeg();
+    else throw new Error(`Unsupported output format ${format}`);
+
+    await sharping.toFile(fileOut);
+  }
 }
 
 // const { implSymbol } = require('jsdom/lib/jsdom/living/generated/utils.js');

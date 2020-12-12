@@ -17,7 +17,8 @@
     "deepmerge": "^4.2.2",
     "highcharts": "^8.2.2",
     "jsdom": "^16.4.0",
-    "klaw-sync": "^6.0.0"
+    "minimist": "^1.2.5",
+    "sharp": "^0.26.3"
   },
   "scripts": {
     "build": "rollup -c",
