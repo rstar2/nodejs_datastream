@@ -5,13 +5,8 @@
 Clone this repository and install its dependencies:
 
 ```bash
-git clone https://github.com/rollup/rollup-starter-app
-cd rollup-starter-app
-npm install
-
-# or
-npx degit "rollup/rollup-starter-app" my-app
-cd my-app
+git clone https://.... folder
+cd folder
 npm install
 ```
 
@@ -24,6 +19,27 @@ The `public/index.html` file contains a `<script src='main.js'>` tag, which mean
 `npm run watch` will continually rebuild the application as your source files change.
 
 `npm run dev` will run `npm start` and `npm run watch` in parallel.
+
+## Building/Creating executables for both Linux and Windows with 'pkg'
+
+First build latest production version of the client code and then package it with 'pkg'
+
+```bash
+npm run build
+npm run pkg
+```
+
+## Creating a new release on GitHub - it's done with GitHub Actions
+
+1. After all needed changes are committed and pushed
+1. Create a new Tag starting with 'v', e.g. 'v1.0.0'
+1. Push it to remote
+1. This will trigger the workflow action 'release.yml' and build the executables and post them in the release
+
+```bash
+git tag -a v1.0.0 -m "For a new release"
+git push --tags
+```
 
 ## License
 

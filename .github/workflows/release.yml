@@ -23,12 +23,14 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Echo
+      - name: Begin
+        id: init
         run: |
-          echo Created new Tag ${{ github.ref }}
+          echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}"
+          echo "Create a new Realse from the new Tag ${{ github.ref }}"
 
       # Checks-out repository under $GITHUB_WORKSPACE, so the job can access it
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v2
 
       # Install the project's deendancies and the global 'pkg' npm module   
@@ -36,12 +38,9 @@ jobs:
         env:
           # This is needed for installing global NPM packages as otherwise NPM will put them in
           # /usr/local/lib/node_modules where the local user has no access.
-          # Other solutions are to either use 'sudo npm install -g pkg' or
-          # change permissions before that 'sudo chown -R $USER /usr/local/lib/node_modules'
           NPM_CONFIG_PREFIX: "~/.npm-global"
         run: |
           npm install -g pkg
-          echo $(which pkg)
           npm install
               
       # This would actually build package (create executables) and zip them
@@ -50,15 +49,9 @@ jobs:
       # the option '--junk-paths' will not create the folder 'dist' but will just zip its contents
       - name: Build and package executables - create a ZIP artifact
         env:
-          # This is needed for installing global NPM packages as otherwise NPM will put them in
-          # /usr/local/lib/node_modules where the local user has no access.
-          # Other solutions are to either use 'sudo npm install -g pkg' or
-          # change permissions before that 'sudo chown -R $USER /usr/local/lib/node_modules'
           NPM_CONFIG_PREFIX: "~/.npm-global"
         run: |
           export PATH=$PATH:${{ env.NPM_CONFIG_PREFIX }}/bin
-          echo $(which pkg)
-          echo $PATH
           npm run build
           npm run pkg
           zip --junk-paths chart dist/**
@@ -75,6 +68,7 @@ jobs:
             Changes in this Release
             - First Change
             - Second Change
+            - Use a real CHANGES.md file and set its path to body_path 
           draft: false
           prerelease: false
           
@@ -86,9 +80,27 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: ./chart.zip
-          asset_name: chart-${{ github.ref }}.zip
+          asset_name: chart-${{ steps.init.outputs.SOURCETAG_NAME }}.zip # create asset with name 'chart-vXXX.zip'
           asset_content_type: application/zip
 
-# TODO: Fix the 'pkg' NPM global package usage 
-# TODO: The github.ref is in the form "refs/tags/vXXX" so try to strip the "refs/tags/" prefix
+# Notes
+# 1.Fix the 'pkg' NPM global package usage:
+#    1. Use env variable NPM_CONFIG_PREFIX, here only the bin path must be added before using it (export PATH=$PATH:${{ env.NPM_CONFIG_PREFIX }}/bin)
+#    2. Another way - Use "sudo npm install -g pkg"   - haven't tested it    
+#    3. Another way - Use "sudo chown -R $USER /usr/local/lib/node_modules" before "npm install -g pkg"  - haven't tested it
+
+# 2. Extract The github.ref is in the form "refs/tags/vXXX" so try to strip the "refs/tags/" prefix
+#    1. Use the  "set-output" command in the workflow to set an output parameter value, e.g. "::set-output name={name}::{value}""
+#         In this case the TAG_NAME ouptut parameter:
+#           - name: Step one
+#             id: step_one
+#             echo '::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}'
+#         Note: here GITHUB_REF is just an environment variable same as the "${{ github_ref }}"" context value
+#         Note: here # is just bash string operator (${variable#pattern}, e.g. Remove shortest starting match)
+#               see https://sookocheff.com/post/bash/bash-string-operators/
+#               so ${'refs/tags/vXXX'#refs/tags/} will be vXXX
+#    2. The in anouther step use this output parameter
+#           - name: Step another
+#             run: echo "The tag name is ${{ steps.step_one.outputs.TAG_NAME }}"
+
 # TODO: Use 'body_path' in the 'create-release' action as it allows to get the specified file's content, with 'body' this is hardcoded now
