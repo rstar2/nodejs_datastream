@@ -23,13 +23,13 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # - name: Echo
-      #   run: |
-      #     echo Created new Tag ${{ github.ref }}
+      - name: Echo
+        run: |
+          echo Created new Tag ${{ github.ref }}
 
-      # # Checks-out repository under $GITHUB_WORKSPACE, so the job can access it
-      # - name: Checkout code
-      #   uses: actions/checkout@v2
+      # Checks-out repository under $GITHUB_WORKSPACE, so the job can access it
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       # Install the project's deendancies and the global 'pkg' npm module   
       - name: Prepare
@@ -40,25 +40,28 @@ jobs:
           # change permissions before that 'sudo chown -R $USER /usr/local/lib/node_modules'
           NPM_CONFIG_PREFIX: "~/.npm-global"
         run: |
-          export PATH=$PATH:${{ env.NPM_CONFIG_PREFIX }}/bin
           npm install -g pkg
           echo $(which pkg)
-
-
-        # npm install
+          npm install
               
       # This would actually build package (create executables) and zip them
       # in chart-vXXX.zip file which is later uploaded as release artifact.
       # Note in 'zip --junk-paths chart-${{ github.ref }} dist/**'
       # the option '--junk-paths' will not create the folder 'dist' but will just zip its contents
       - name: Build and package executables - create a ZIP artifact
+        env:
+          # This is needed for installing global NPM packages as otherwise NPM will put them in
+          # /usr/local/lib/node_modules where the local user has no access.
+          # Other solutions are to either use 'sudo npm install -g pkg' or
+          # change permissions before that 'sudo chown -R $USER /usr/local/lib/node_modules'
+          NPM_CONFIG_PREFIX: "~/.npm-global"
         run: |
+          export PATH=$PATH:${{ env.NPM_CONFIG_PREFIX }}/bin
           echo $(which pkg)
           echo $PATH
-        # run: |
-        #   ]npm run build
-        #   npm run pkg
-        #   zip --junk-paths chart dist/**
+          npm run build
+          npm run pkg
+          zip --junk-paths chart dist/**
 
       - name: Create Release
         id: create_release
