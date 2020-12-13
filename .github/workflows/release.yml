@@ -23,13 +23,13 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Echo
-        run: |
-          echo Created new Tag ${{ github.ref }}
+      # - name: Echo
+      #   run: |
+      #     echo Created new Tag ${{ github.ref }}
 
-      # Checks-out repository under $GITHUB_WORKSPACE, so the job can access it
-      - name: Checkout code
-        uses: actions/checkout@v2
+      # # Checks-out repository under $GITHUB_WORKSPACE, so the job can access it
+      # - name: Checkout code
+      #   uses: actions/checkout@v2
 
       # Install the project's deendancies and the global 'pkg' npm module   
       - name: Prepare
@@ -42,7 +42,7 @@ jobs:
         run: |
           export PATH=$PATH:${{ env.NPM_CONFIG_PREFIX }}/bin
           npm install -g pkg
-          echo (which pkg)
+          echo $(which pkg)
 
 
         # npm install
@@ -53,7 +53,7 @@ jobs:
       # the option '--junk-paths' will not create the folder 'dist' but will just zip its contents
       - name: Build and package executables - create a ZIP artifact
         run: |
-          echo (which pkg)
+          echo $(which pkg)
           echo $PATH
         # run: |
         #   ]npm run build
