@@ -36,10 +36,25 @@ npm run pkg
 1. Push it to remote
 1. This will trigger the workflow action 'release.yml' and build the executables and post them in the release
 
+push all tags
+
 ```bash
 git tag -a v1.0.0 -m "For a new release"
 git push --tags
 ```
+
+or to push just the single tag "v1.0.0"
+
+```bash
+git tag v1.0.0
+git push origin tag v1.0.0 
+```
+
+Notes if needed t delete a tag:
+
+Delete local tag:  ```git tag -d v1.0.0```
+
+Delete remove tag: ```git push origin tag --delete v1.0.0```
 
 ## License
 
