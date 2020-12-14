@@ -71,8 +71,9 @@ Delete remove tag: ```git push origin tag --delete v1.0.0```
 1. ~~Use highcharts NPM module~~
 1. ~~Split Rollup bundles to vendor and app/local~~
     > Technically  not possible until JSDOM supports ES modules
-1. Use a GitHub-Action for running "npm run pkg" and creating a new "release"
-1. Create a new "dev" Git branch that when merged into main will trigger the new GitHub-Action
+1. ~~Use a GitHub-Action for running "npm run pkg" and creating a new "release"~~
+    > Created .github/workflows/release/yml.
+    It is started when a new Tag with pattern "vXXX" is created, e.g on new Tag 'v1.0.0' a new Release 'chart-v1.0.0.zip' will be created
 1. Error cases
     1. ~~CLI misusage~~
     1. Invalid datastream file structure
