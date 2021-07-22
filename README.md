@@ -78,10 +78,10 @@ Delete remove tag: ```git push origin tag --delete v1.0.0```
     It is started when a new Tag with pattern "vXXX" is created, e.g on new Tag 'v1.0.0' a new Release 'chart-v1.0.0.zip' will be created
 1. Error cases
     1. ~~CLI misusage~~
-    1. Invalid datastream file structure
+    1. ~~Invalid datastream file structure~~
     1. Charting failure (inside jsdom/highcharts/image-conversion)
-1. Add "legend"/meta-data info below the chart
-    1. Max point
+1. ~~Add "legend"/meta-data info below the chart~~
+    1. ~~Max point~~
     1. Integral sum
 
 1. Test cases Jest and etc...
