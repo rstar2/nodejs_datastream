@@ -17,7 +17,7 @@ fileUploadEl.addEventListener('change', async (event) => {
   let data = await readFile(file);
   data = parseFile(data);
   //   console.log('data', data);
-  chart.update([data]);
+  chart.update(data);
 });
 
 // export it tom window, so that it could be used from external scripts, or like it is done now form jsdom

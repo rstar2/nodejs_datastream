@@ -10,6 +10,8 @@ cd folder
 npm install
 ```
 
+## Run the app locally
+
 The `public/index.html` file contains a `<script src='main.js'>` tag, which means we need to create `public/main.js`. The `rollup.config.js` file tells Rollup how to create this bundle, starting with `src/main.js` and including all its dependencies, .
 
 `npm run build` builds the application to `public/main.js`, along with a sourcemap file for debugging.
@@ -65,12 +67,12 @@ Delete remove tag: ```git push origin tag --delete v1.0.0```
 ## TODO
 
 1. ~~CLI - Create arguments parsing (format, strategy, ...). Add help message~~
-1. Support multiple datastream files
+1. ~~Support multiple datastream files~~ - NOT NEEDED for now
 1. ~~Convert output SVG to PNG or JPEG format~~
-1. Add filter strategies:  skip the "initial" and later "backwards" points (strategy or middleware pattern, or even using RxJS)
+1. ~~Add filter strategies:  skip the "initial" and later "backwards" points (strategy or middleware pattern, or even using RxJS)~~ - NOT NEEDED for now
 1. ~~Use highcharts NPM module~~
 1. ~~Split Rollup bundles to vendor and app/local~~
-    > Technically  not possible until JSDOM supports ES modules
+    > Technically not possible until JSDOM supports loading of ES modules (e.g. ```<script type="module">```)
 1. ~~Use a GitHub-Action for running "npm run pkg" and creating a new "release"~~
     > Created .github/workflows/release/yml.
     It is started when a new Tag with pattern "vXXX" is created, e.g on new Tag 'v1.0.0' a new Release 'chart-v1.0.0.zip' will be created
@@ -78,3 +80,9 @@ Delete remove tag: ```git push origin tag --delete v1.0.0```
     1. ~~CLI misusage~~
     1. Invalid datastream file structure
     1. Charting failure (inside jsdom/highcharts/image-conversion)
+1. Add "legend"/meta-data info below the chart
+    1. Max point
+    1. Integral sum
+
+1. Test cases Jest and etc...
+1. Then add CI (GitHub-Action) that runs the test after each commit-push

@@ -14,7 +14,7 @@ export default {
     dir: 'public/js',
 
     // IIFE (immediately-invoked function expression) - suitable for <script> tags
-    //     and only supported for single bundle, NOT when Code-splitting builds
+    //     and only supported for single bundle, NOT with Code-splitting builds
     // ESM (Es modules) suitable for <script type="module"> tags
     format: outputESM ? 'esm' : 'iife',
 

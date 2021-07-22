@@ -188,7 +188,7 @@ async function getChartData(fileIn) {
 
 async function exportChart(chartData) {
   // 1. draw the chart
-  window.chart.update([chartData]);
+  window.chart.update(chartData);
   // console.log(window.innerWidth, window.innerHeight);
 
   // 2. export it
