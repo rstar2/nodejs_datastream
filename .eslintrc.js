@@ -4,6 +4,7 @@ module.exports = {
     browser: true,
     node: true,
     es2020: true,
+    jest: true,
   },
   parserOptions: {
     sourceType: 'module',

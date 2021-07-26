@@ -84,5 +84,6 @@ Delete remove tag: ```git push origin tag --delete v1.0.0```
     1. ~~Max point~~
     1. Integral sum
 
-1. Test cases Jest and etc...
-1. Then add CI (GitHub-Action) that runs the test after each commit-push
+1. ~~Test cases with Jest~~
+1. ~~Then add CI (GitHub-Action) that runs the test after each commit-push~~
+    > Created .github/workflows/test.yml GitHub-Action
