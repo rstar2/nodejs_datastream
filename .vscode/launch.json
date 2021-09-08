@@ -15,13 +15,44 @@
     {
         "type": "node",
         "request": "launch",
-        "name": "Create Chart",
+        "name": "Create Chart - single folder",
         "skipFiles": ["<node_internals>/**"],
         "program": "cli/chart.js",
         // "cwd": "${relativeFileDirname}"
         "args": [
-          "data/CAPTURE_11.TXT"
+          "data",
+          "-n=cli-chart",
+          "-f=svg"
         ]
-      }
+    },
+    {
+        "type": "node",
+        "request": "launch",
+        "name": "Create Chart - single file",
+        "skipFiles": ["<node_internals>/**"],
+        "program": "cli/chart.js",
+        // "cwd": "${relativeFileDirname}"
+        "args": [
+          "data/CAPTURE_11.TXT",
+          "-n=cli-chart",
+          "-f=svg"
+        ]
+    },
+    {
+        "type": "node",
+        "request": "launch",
+        "name": "Create Chart - multiple files",
+        "skipFiles": ["<node_internals>/**"],
+        "program": "cli/chart.js",
+        // "cwd": "${relativeFileDirname}"
+        "args": [
+          "-n=cli-chart",
+          "-f=svg",
+          "data/CAPTURE_11.TXT",
+          "data/CAPTURE_12.TXT",
+          "data/CAPTURE_12xxx.TXT",
+          "data/CAPTURE_13.TXT"
+        ]
+    }
   ]
 }

@@ -3,15 +3,9 @@
 <head lang='en'>
 	<meta charset='utf-8'>
 	<meta name='viewport' content='width=device-width'>
-	<title>Datastream chart</title>
+	<title>Datastream Chart</title>
 
-	<style>
-		body {
-			font-family: 'Helvetica Neue', Arial, sans-serif;
-			color: #333;
-			font-weight: 300;
-		}
-    </style>
+	<link rel="stylesheet" href="css/style.css">
 
     <!-- For Highcharts chart -->
     <!-- <script src="js/lib/highcharts/highcharts.js"></script>
@@ -32,8 +26,10 @@
 
 </head>
 <body>
-    <input type="file" id="fileUpload" accept="text/*" style="display:none">
+    <input type="file" id="fileUpload" accept="text/*" multiple style="display:none">
     <button id="fileSelect">Upload Data</button>
+    <button id="exportSVG" style="display: none;">Export to SVG</button>
+    <button id="exportPNG" style="display: none;">Export to PNG</button>
 
     <div id='myHighcharts' style="width: 100%; height: 100%;">
         <!-- Highcharts chart will be drawn inside this DIV -->

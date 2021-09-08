@@ -24,12 +24,21 @@ The `public/index.html` file contains a `<script src='main.js'>` tag, which mean
 
 ## Building/Creating executables for both Linux and Windows with 'pkg'
 
-First build latest production version of the client code and then package it with 'pkg'
+First build latest production version of the client code and then package it with 'pkg'.
 
 ```bash
 npm run build
 npm run pkg
 ```
+
+## Deploying the web version
+
+The app si hosted by Surge.sh on the data-chart.surge.sh domain
+
+First ensure the surge CLI is installed with ```npm install -g surge``` and then "login" into Surge.sh with ```surge login```.
+
+Run ```npm run deploy``` in order to upload the public folder to Surge.sh.
+
 
 ## Creating a new release on GitHub - it's done with GitHub Actions
 
@@ -56,7 +65,7 @@ Notes if needed t delete a tag:
 
 Delete local tag:  ```git tag -d v1.0.0```
 
-Delete remove tag: ```git push origin tag --delete v1.0.0```
+Delete remote tag: ```git push origin tag --delete v1.0.0```
 
 ## License
 
@@ -76,14 +85,20 @@ Delete remove tag: ```git push origin tag --delete v1.0.0```
 1. ~~Use a GitHub-Action for running "npm run pkg" and creating a new "release"~~
     > Created .github/workflows/release/yml.
     It is started when a new Tag with pattern "vXXX" is created, e.g on new Tag 'v1.0.0' a new Release 'chart-v1.0.0.zip' will be created
-1. Error cases
+1. ~~Error cases~~
     1. ~~CLI misusage~~
     1. ~~Invalid datastream file structure~~
-    1. Charting failure (inside jsdom/highcharts/image-conversion)
+    1. ~~Charting failure (inside jsdom/highcharts/image-conversion)~~
 1. ~~Add "legend"/meta-data info below the chart~~
     1. ~~Max point~~
-    1. Integral sum
+    1. ~~Integral~~
+    1. Split the max 9 files into 3 table with 3 rows each
+    1. Fix when usage with JSDOM as then exported SVG is not with correct "heights" as when in the browser, and so this legend is "invisible"
 
 1. ~~Test cases with Jest~~
 1. ~~Then add CI (GitHub-Action) that runs the test after each commit-push~~
     > Created .github/workflows/test.yml GitHub-Action
+
+1. Implement "filtering" strategies? Examples:
+    - Skip initial "zeros"
+    - Skip "duplicate/overlapping" points, e.g. points like [12, 454] and [12, 467] - use only first/last  

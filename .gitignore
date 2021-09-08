@@ -5,9 +5,8 @@ public/bundle*
 
 dist
 
-data/**/*.xlsx
-data/**/*.out
-data/**/*.svg
-data/**/*.png
-data/**/*.jpg
-data/**/*.jpeg
+data/**/*.*
+!data/**/*.txt
+
+chart.*
+cli-chart.*

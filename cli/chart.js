@@ -3,9 +3,9 @@ const path = require('path');
 
 const sharp = require('sharp');
 
-const { fileIn, strategy, format } = require('../lib/args');
+const { title, files, format, fileOut } = require('../lib/args');
 const { convertFile } = require('../lib/convert');
-const { STRATEGY_TYPE, FORMAT_TYPE } = require('../lib/util');
+const { FORMAT_TYPE, getLastName } = require('../lib/util');
 
 const jsdom = require('jsdom');
 
@@ -19,8 +19,19 @@ async function main() {
 
   setupHighcharts();
 
-  const chartData = await getChartData(fileIn);
-  await exportChart(chartData);
+  let listData = await Promise.allSettled(
+    files.map(async (file) => {
+      return {
+        points: await getChartData(file),
+        name: getLastName(file),
+      };
+    })
+  );
+  listData = listData
+    .filter((result) => result.status === 'fulfilled')
+    .map((result) => result.value);
+
+  await exportChart(listData, { title });
 }
 
 async function setupJsdom(fileHtml) {
@@ -154,16 +165,7 @@ async function setupJsdom(fileHtml) {
 
 function setupHighcharts() {
   // Disable all animation
-  window.Highcharts.setOptions({
-    plotOptions: {
-      series: {
-        animation: false,
-        dataLabels: {
-          defer: false,
-        },
-      },
-    },
-  });
+  window.chart.disableAnimation();
 }
 
 async function getChartData(fileIn) {
@@ -186,21 +188,21 @@ async function getChartData(fileIn) {
   });
 }
 
-async function exportChart(chartData) {
+async function exportChart(chartData, opts) {
   // 1. draw the chart
-  window.chart.update(chartData);
+  window.chart.update(chartData, opts);
   // console.log(window.innerWidth, window.innerHeight);
 
   // 2. export it
-  const svg = window.highchartsChart.getSVG();
-  //   const svg = window.highchartsChart.sanitizeSVG();
+  const svg = window.chart.getSVG();
 
+  // 3. save it to disk
   await convertAndSave(svg);
 }
 
 async function convertAndSave(svg) {
-  console.log(`Save in chart in '${format.toUpperCase()}' format`);
-  const fileOut = fileIn + '.' + format;
+  console.log(`Save chart to ${fileOut} in '${format.toUpperCase()}' format`);
+
   if (format === FORMAT_TYPE.SVG) {
     fs.writeFileSync(fileOut, svg);
   } else {

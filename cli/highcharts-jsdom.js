@@ -22,6 +22,7 @@ const dom = new JSDOM(
 const win = dom.window;
 const doc = win.document;
 
+global.Node = win.Node; // Workaround for issue #1
 win.Date = Date;
 
 // Do some modifications to the jsdom document in order to get the SVG bounding
@@ -150,13 +151,16 @@ module.exports = ({
           chart = Highcharts[constr]('container', options);
         } catch (e) {
           reject(e);
+          return;
         }
+
         let time = Date.now() - start;
 
         let svg = chart.sanitizeSVG(chart.container.innerHTML);
         fs.writeFile(outfile, svg, function (err) {
           if (err) {
             reject(err);
+            return;
           }
 
           resolve({
@@ -168,6 +172,7 @@ module.exports = ({
       });
     } else {
       reject('No in file given');
+      return;
     }
   });
 };

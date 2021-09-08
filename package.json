@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "deepmerge": "^4.2.2",
+    "directory-tree": "^2.3.1",
     "highcharts": "^9.1.2",
     "jsdom": "^16.6.0",
     "minimist": "^1.2.5",
@@ -28,6 +29,7 @@
     "watch": "rollup -c -w",
     "dev": "npm-run-all --parallel start watch",
     "start": "serve public",
-    "pkg": "pkg cli/chart.js --targets 'linux,win' --out-path dist --config pkg.json"
+    "pkg": "pkg cli/chart.js --targets 'linux,win' --out-path dist --config pkg.json",
+    "deploy-web": "npm run build && surge ./public --domain data-chart.surge.sh"
   }
 }

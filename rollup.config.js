@@ -18,7 +18,7 @@ export default {
     // ESM (Es modules) suitable for <script type="module"> tags
     format: outputESM ? 'esm' : 'iife',
 
-    sourcemap: production && true,
+    sourcemap: !production,
   },
   // code-splitting is NOT allowed for single bundle
   manualChunks: outputESM
