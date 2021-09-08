@@ -1,35 +1,36 @@
 {
   "name": "datastream-chart",
   "version": "1.0.1",
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^19.0.1",
-    "@rollup/plugin-node-resolve": "^13.0.2",
-    "@types/jest": "^26.0.24",
-    "eslint": "^7.31.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^3.4.0",
-    "jest": "^27.0.6",
-    "npm-run-all": "^4.1.5",
-    "prettier": "^2.3.2",
-    "rollup": "^2.53.3",
-    "rollup-plugin-terser": "^7.0.2",
-    "serve": "^12.0.0"
-  },
-  "dependencies": {
-    "deepmerge": "^4.2.2",
-    "directory-tree": "^2.3.1",
-    "highcharts": "^9.1.2",
-    "jsdom": "^16.6.0",
-    "minimist": "^1.2.5",
-    "sharp": "^0.28.3"
-  },
   "scripts": {
     "test": "jest",
     "build": "rollup -c",
     "watch": "rollup -c -w",
     "dev": "npm-run-all --parallel start watch",
     "start": "serve public",
-    "pkg": "pkg cli/chart.js --targets 'linux,win' --out-path dist --config pkg.json",
+    "pkg": "pkg cli/chart.js --config pkg.json",
     "deploy-web": "npm run build && surge ./public --domain data-chart.surge.sh"
+  },
+  "dependencies": {
+    "deepmerge": "^4.2.2",
+    "directory-tree": "^2.3.1",
+    "highcharts": "^9.2.2",
+    "jsdom": "^17.0.0",
+    "minimist": "^1.2.5",
+    "sharp": "^0.29.1",
+    "svg-png-converter": "^0.0.9"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^20.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.4",
+    "@types/jest": "^27.0.1",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.1.1",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.3.2",
+    "rollup": "^2.56.3",
+    "rollup-plugin-terser": "^7.0.2",
+    "serve": "^12.0.0"
   }
 }

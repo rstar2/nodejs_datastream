@@ -3,5 +3,21 @@
   "_assets": "public/**/*",
 
   "_comment:assets": "Add only those needed currentyl in index.html",
-  "assets": ["public/index.html", "public/js/main.js"]
+  "assets": [
+      "public/index.html",
+      "public/js/main.js",
+      "public/css/style.css",
+
+      "node_modules/canvas/build/Release/**/*",
+
+      "node_modulesX/sharp/build/Release/**/*",
+      "node_modulesX/sharp/vendor/**/*"
+  ],
+  
+  "scripts": [
+      
+  ],
+    
+  "targets": ["linux", "win"],
+  "outputPath": "dist"
 }
