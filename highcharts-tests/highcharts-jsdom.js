@@ -109,8 +109,8 @@ doc.createElementNS = (ns, tagName) => {
 module.exports = ({
   constr = 'chart',
   extensions = [],
-  infile,
-  outfile = 'chart.svg',
+  inFile,
+  outFile = 'chart.svg',
 }) => {
   return new Promise((resolve, reject) => {
     // Require Highcharts with the window shim
@@ -135,8 +135,8 @@ module.exports = ({
       },
     });
 
-    if (infile) {
-      fs.readFile(infile, 'utf8', (err, file) => {
+    if (inFile) {
+      fs.readFile(inFile, 'utf8', (err, file) => {
         if (err) {
           reject(err);
           return;
@@ -157,7 +157,7 @@ module.exports = ({
         let time = Date.now() - start;
 
         let svg = chart.sanitizeSVG(chart.container.innerHTML);
-        fs.writeFile(outfile, svg, function (err) {
+        fs.writeFile(outFile, svg, function (err) {
           if (err) {
             reject(err);
             return;
@@ -165,8 +165,8 @@ module.exports = ({
 
           resolve({
             bytes: svg.length,
-            outfile: __dirname + '/' + outfile,
-            time: time,
+            outFile: __dirname + '/' + outFile,
+            time,
           });
         });
       });

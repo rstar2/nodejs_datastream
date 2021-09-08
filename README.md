@@ -40,8 +40,8 @@ See also https://github.com/vercel/pkg/issues/107
 ­
 
 ```bash
-pkg --debug app.js -o output   > dist/debug.log
-DEBUG_PKG=1 output   > run.log
+pkg --debug app.js -o output > dist/debug.log
+DEBUG_PKG=1 output > run.log
 ```
 
 So all is in run.log (and debug.log)

@@ -8,10 +8,10 @@
       "public/js/main.js",
       "public/css/style.css",
 
-      "node_modules/canvas/build/Release/**/*",
+      "_node_modules/canvas/build/Release/**/*",
 
-      "node_modulesX/sharp/build/Release/**/*",
-      "node_modulesX/sharp/vendor/**/*"
+      "_node_modules/sharp/build/Release/**/*",
+      "_node_modules/sharp/vendor/**/*"
   ],
   
   "scripts": [

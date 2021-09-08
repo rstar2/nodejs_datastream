@@ -1,4 +1,4 @@
-const sharp = require('sharp');
+const fs = require('fs');
 
 const fileIn = process.argv[2];
 if (!fileIn) {
@@ -7,7 +7,9 @@ if (!fileIn) {
 }
 
 console.log('Converting...');
-sharp(fileIn)
+
+// using sharp
+require('sharp')(fileIn)
   .png()
   .toFile(fileIn + '.png')
   .then(console.log)

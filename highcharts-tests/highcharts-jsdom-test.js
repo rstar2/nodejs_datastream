@@ -1,8 +1,8 @@
 const hc = require('./highcharts-jsdom');
 
 hc({
-  infile: './data/bubble.json',
-  outfile: 'chart.svg',
+  inFile: './data/bubble.json',
+  outFile: 'chart.svg',
 
   // Constructor, defaults to 'chart'
   constr: 'chart',
