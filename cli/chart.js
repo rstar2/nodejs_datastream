@@ -1,7 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const sharp = require('sharp');
+// const sharp = require('sharp');
+const PDFDocument = require('pdfkit');
+const SVGtoPDF = require('svg-to-pdfkit');
 
 const { title, files, format, fileOut } = require('../lib/args');
 const { convertFile } = require('../lib/convert');
@@ -193,46 +195,38 @@ async function exportChart(chartData, opts) {
   window.chart.update(chartData, opts);
   // console.log(window.innerWidth, window.innerHeight);
 
-  // 2. export it
+  // 2. export it from highcharts and save it to disk
+  await convertAndSave();
+}
+
+async function convertAndSave() {
   const svg = window.chart.getSVG();
 
-  // 3. save it to disk
-  await convertAndSave(svg);
-}
-
-async function convertAndSave(svg) {
-  console.log(`Save chart to ${fileOut} in '${format.toUpperCase()}' format`);
-
-  if (format === FORMAT_TYPE.SVG) {
-    fs.writeFileSync(fileOut, svg);
-  } else {
-    const buffer = Buffer.from(svg, 'utf8');
-    let sharping = sharp(buffer);
-
-    if (format === FORMAT_TYPE.PNG) sharping = sharping.png();
-    else if (format === FORMAT_TYPE.JPEG) sharping = sharping.jpeg();
-    else throw new Error(`Unsupported output format ${format}`);
-
-    await sharping.toFile(fileOut);
+  switch (format) {
+    case FORMAT_TYPE.SVG:
+      fs.writeFileSync(fileOut, svg);
+      break;
+    case FORMAT_TYPE.PDF: {
+      // TODO: convert to PDF
+      const doc = new PDFDocument();
+      const stream = fs.createWriteStream(fileOut);
+      SVGtoPDF(doc, svg, 0, 0);
+      doc.pipe(stream);
+      doc.end();
+      break;
+    }
+    default:
+    // TODO: convert to PNG/JPG
+    //   const buffer = Buffer.from(svg, 'utf8');
+    //   let sharping = sharp(buffer);
+    //   if (format === FORMAT_TYPE.PNG) sharping = sharping.png();
+    //   else if (format === FORMAT_TYPE.JPEG) sharping = sharping.jpeg();
+    //   else throw new Error(`Unsupported output format ${format}`);
+    //   await sharping.toFile(fileOut);
   }
+
+  console.log(`Saved chart to ${fileOut} in '${format.toUpperCase()}' format`);
 }
-
-// const { implSymbol } = require('jsdom/lib/jsdom/living/generated/utils.js');
-// download(window, 'test.out', 'Hello');
-// function download(window, filename, text) {
-//   const data = {
-//     name: 'Rumen',
-//     country: 'BG',
-//     role: 'Web Developer',
-//   };
-//   // Creating a blob object from non-blob data using the Blob constructor
-//   //
-//   const blob = new window.Blob([text], {
-//     type: 'text/plain',
-//   });
-
-//   console.log(blob[implSymbol]._buffer);
-// }
 
 // start the script
 main().catch((error) => {

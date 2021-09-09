@@ -1,12 +1,15 @@
 import * as chart from './chart.js';
 import readFile from './read_file.js';
-import { parseFile } from '../lib/parse.js';
+import svg2blob from './svg2blob';
 import exportFile from './export_file.js';
+import { parseFile } from '../lib/parse.js';
+import { FORMAT_TYPE } from '../lib/util';
 
 const fileSelectEl = document.getElementById('fileSelect');
 const fileUploadEl = document.getElementById('fileUpload');
 const exportSVGEl = document.getElementById('exportSVG');
 const exportPNGEl = document.getElementById('exportPNG');
+const exportPDFEl = document.getElementById('exportPDF');
 
 // when clicked trigger the file-input select
 fileSelectEl.addEventListener('click', fileUploadEl.click.bind(fileUploadEl));
@@ -42,36 +45,44 @@ fileUploadEl.addEventListener('change', async (event) => {
     title: listData.length === 1 ? listData[0].name : undefined,
   });
 
-  // NOTE: Currently this is not needed (this is just for testing) so let then stay invisible,
   // the built-in export is enough,
   // show the buttons as they are initially hidden
-  //   exportSVGEl.style.display = '';
-  //   exportPNGEl.style.display = '';
+  exportSVGEl.style.display = '';
+  exportPNGEl.style.display = '';
+  exportPDFEl.style.display = '';
 });
 
 exportSVGEl.addEventListener('click', exportChart);
 exportPNGEl.addEventListener('click', exportChart);
+exportPDFEl.addEventListener('click', exportChart);
 
 /**
  *
  * @param {Event} event
  */
-function exportChart(event) {
-  const isPNG = event.target === exportPNGEl;
+async function exportChart(event) {
+  const format = event.target.dataset['format'];
 
-  console.log(`Export to ${isPNG ? 'PNG' : 'SVG'}`);
-  let data = chart.getSVG();
-  if (isPNG) {
-    // TODO: convert to PNG in client if needed
-    // data = ...;
-    throw new Error('Not implemented yet');
+  console.log(`Export to ${format}`);
+
+  const svg = chart.getSVG();
+
+  let data, mimetype, extension;
+  switch (format) {
+    case FORMAT_TYPE.SVG:
+      extension = 'svg';
+      mimetype = 'image/svg+xml';
+      data = svg;
+      break;
+    case FORMAT_TYPE.PNG: {
+      extension = 'png';
+      mimetype = 'image/png';
+      data = await svg2blob(svg);
+      break;
+    }
   }
 
-  exportFile(
-    data,
-    `chart.${isPNG ? 'png' : 'svg'}`,
-    `image/${isPNG ? 'png' : 'svg+xml'}`
-  );
+  await exportFile(data, `chart.${extension}`, mimetype);
 }
 
 // export to window, so that they could be used from external scripts,

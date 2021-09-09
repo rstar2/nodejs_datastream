@@ -50,7 +50,7 @@ const defOptions = {
     borderWidth: 0,
     x: 60,
 
-    // if neededdon't show the legend text
+    // if needed to not show the legend text
     // enabled: false,
   },
   chart: {

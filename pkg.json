@@ -2,16 +2,23 @@
   "_comment:_assets": "Add all if JavaScript files loaded in index.html are from local filesystem",
   "_assets": "public/**/*",
 
-  "_comment:assets": "Add only those needed currentyl in index.html",
+  "_comment:assets": "Add those needed currently in index.html",
   "assets": [
+      "comment - local statc files, used later by jsdom",
       "public/index.html",
       "public/js/main.js",
       "public/css/style.css",
 
-      "_node_modules/canvas/build/Release/**/*",
+      "comment - needed for sharp - not working yet ",
+      "_node_modules/sharp/build/Release/**/*.node",
+      "_node_modules/sharp/build/Release/**/*.so.*",
+      "_node_modules/sharp/vendor/**/*",
 
-      "_node_modules/sharp/build/Release/**/*",
-      "_node_modules/sharp/vendor/**/*"
+
+      "comment - needed for pdfkit ",
+      "node_modules/linebreak/src/classes.trie",
+      "node_modules/pdfkit/js/data/*",
+      "node_modules/pdfkit/js/font/data/*"
   ],
   
   "scripts": [

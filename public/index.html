@@ -28,8 +28,9 @@
 <body>
     <input type="file" id="fileUpload" accept="text/*" multiple style="display:none">
     <button id="fileSelect">Upload Data</button>
-    <button id="exportSVG" style="display: none;">Export to SVG</button>
-    <button id="exportPNG" style="display: none;">Export to PNG</button>
+    <button id="exportSVG" data-format="svg" style="display: none;">Export to SVG</button>
+    <button id="exportPNG" data-format="png" style="display: none;">Export to PNG</button>
+    <button id="exportPDF" data-format="pdf" style="display: none;">Export to PDF</button>
 
     <div id='myHighcharts' style="width: 100%; height: 100%;">
         <!-- Highcharts chart will be drawn inside this DIV -->

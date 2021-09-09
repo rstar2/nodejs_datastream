@@ -17,7 +17,9 @@
     "highcharts": "^9.2.2",
     "jsdom": "^17.0.0",
     "minimist": "^1.2.5",
-    "sharp": "^0.29.1"
+    "pdfkit": "^0.12.3",
+    "sharp": "^0.29.1",
+    "svg-to-pdfkit": "^0.1.8"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^20.0.0",

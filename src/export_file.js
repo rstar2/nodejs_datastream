@@ -1,6 +1,6 @@
 /**
  * Export given data to file (e.g. client download)
- * @param {string} data
+ * @param {string|Blob} data
  * @param {string} fileName
  * @param {string} mimeType
  */
@@ -10,7 +10,8 @@ export default async function (
   mimeType = 'application/octet-stream'
 ) {
   return new Promise((resolve) => {
-    const blob = new Blob([data], { type: mimeType });
+    const blob =
+      data instanceof Blob ? data : new Blob([data], { type: mimeType });
     const url = URL.createObjectURL(blob);
 
     const anchor = document.createElement('a');

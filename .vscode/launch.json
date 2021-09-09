@@ -33,9 +33,9 @@
         "program": "cli/chart.js",
         // "cwd": "${relativeFileDirname}"
         "args": [
-          "data/CAPTURE_11.TXT",
-          "-n=cli-chart",
-          "-f=svg"
+          "data/hp1.txt",
+          "-n=dist/chart",
+          "-f=png"
         ]
     },
     {
