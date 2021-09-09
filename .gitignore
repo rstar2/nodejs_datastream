@@ -1,11 +1,13 @@
 .DS_Store
 node_modules
-public/bundle*
+
+public/js/main.js
+public/js/main.js.map
 
 dist
 
 data/**/*.*
 !data/**/*.txt
 
-chart.*
-cli-chart.*
+*.svg
+*.png
