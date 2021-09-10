@@ -14,6 +14,10 @@
       "_node_modules/sharp/build/Release/**/*.so.*",
       "_node_modules/sharp/vendor/**/*",
 
+      "comment - needed for canvas - but the exe will become veeery big (with ~180MB more)",
+      "comment - needed for canvas - also bundling for Linux and Windows cannot be form one machine",
+      "node_modules/canvas/build/Release/**/*",
+
 
       "comment - needed for pdfkit ",
       "node_modules/linebreak/src/classes.trie",

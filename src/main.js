@@ -1,9 +1,10 @@
-import * as chart from './chart.js';
 import readFile from './read_file.js';
-import svg2blob from './svg2blob';
+import * as svg2blob from './svg2blob';
+// import * as svg2pdf from './svg2pdf';
 import exportFile from './export_file.js';
 import { parseFile } from '../lib/parse.js';
 import { FORMAT_TYPE } from '../lib/util';
+import * as chart from './chart.js';
 
 const fileSelectEl = document.getElementById('fileSelect');
 const fileUploadEl = document.getElementById('fileUpload');
@@ -77,12 +78,23 @@ async function exportChart(event) {
     case FORMAT_TYPE.PNG: {
       extension = 'png';
       mimetype = 'image/png';
-      data = await svg2blob(svg);
+      data = await svg2blob.getFromSVG(svg, {mimetype, quality: 1});
+      break;
+    }
+    case FORMAT_TYPE.PDF: {
+      extension = 'pdf';
+      mimetype = 'application/pdf';
+
+    //   const image = await svg2png.getCanvas(svg);
+    //   data = svg2pdf.getFromImage(image, 'PNG');
+    
+    //   data = await svg2pdf.getFromSVG(svg);
+      data = await svg2blob.getFromSVG(svg, {asDataUrl: true});
       break;
     }
   }
 
-  await exportFile(data, `chart.${extension}`, mimetype);
+  if (data) await exportFile(data, `chart.${extension}`, mimetype);
 }
 
 // export to window, so that they could be used from external scripts,

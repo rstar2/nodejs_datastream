@@ -41,7 +41,7 @@ See also https://github.com/vercel/pkg/issues/107
 
 ```bash
 pkg --debug app.js -o output > dist/debug.log
-DEBUG_PKG=1 output > run.log
+DEBUG_PKG=1 output > dist/run.log
 ```
 
 So all is in run.log (and debug.log)
@@ -110,7 +110,8 @@ It's good before that ot update the CHANGES.md file.
     1. ~~Max point~~
     1. ~~Integral~~
     1. Split the max 9 files into 3 table with 3 rows each
-    1. Fix when usage with JSDOM as then exported SVG is not with correct "heights" as when in the browser, and so this legend is "invisible"
+    1. 🚩️ Fix when usage with JSDOM as then exported SVG is not with correct "heights" as when in the browser, and so this legend is "invisible"
+    1. 🚩️ Fix bundling the "sharp" module with pkg - the addons must be added somehow
 
 1. ~~Test cases with Jest~~
 1. ~~Then add CI (GitHub-Action) that runs the test after each commit-push~~

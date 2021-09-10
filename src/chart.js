@@ -1,13 +1,18 @@
 import merge from 'deepmerge';
+import * as svg2blob from './svg2blob';
+
 import Highcharts from 'highcharts';
+
 // Load the exporting module.
 import Exporting from 'highcharts/modules/exporting';
-import ExportData from 'highcharts/modules/export-data';
+
+// import 'jspdf';
+// import 'svg2pdf.js';
 // import OfflineExporting from 'highcharts/modules/offline-exporting';
 
 // Initialize exporting module.
 Exporting(Highcharts);
-ExportData(Highcharts);
+// OfflineExporting(Highcharts);
 
 // Highcharts.AST.allowedTags.push('h1,div,table,th,tr,td');
 
@@ -22,6 +27,7 @@ let currentChart = null;
 const defOptions = {
   exporting: {
     allowHTML: true,
+    fallbackToExportServer: false,
   },
   title: {
     text: 'Title', // this is dynamic value set later
@@ -121,6 +127,24 @@ export function getSVG() {
   if (!currentChart) throw new Error('No valid Highcharts chart');
 
   return currentChart.getSVG();
+}
+
+/**
+ * @param {string} mimetype 
+ * @param {string} quality 
+ * @return {string}
+ */
+export async function getImageDataUrl(mimetype = 'image/png', quality = 1) {
+    return svg2blob.getFromSVG(getSVG(), {mimetype, quality, asDataUrl: true});
+}
+
+/**
+ * @return {SVGElement}
+ */
+export function getSVGElement() {
+    if (!currentChart) throw new Error('No valid Highcharts chart');
+
+    return currentChart.renderer.boxWrapper.element;
 }
 
 /**

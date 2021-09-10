@@ -6,7 +6,7 @@ const PDFDocument = require('pdfkit');
 const SVGtoPDF = require('svg-to-pdfkit');
 
 const { title, files, format, fileOut } = require('../lib/args');
-const { convertFile } = require('../lib/convert');
+const { parseFile } = require('../lib/parse-fs');
 const { FORMAT_TYPE, getLastName } = require('../lib/util');
 
 const jsdom = require('jsdom');
@@ -173,7 +173,7 @@ function setupHighcharts() {
 async function getChartData(fileIn) {
   return new Promise((resolve, reject) => {
     const chartData = [];
-    convertFile(
+    parseFile(
       fileIn,
       function onLine(lineData) {
         // console.log(lineData);
@@ -200,29 +200,38 @@ async function exportChart(chartData, opts) {
 }
 
 async function convertAndSave() {
-  const svg = window.chart.getSVG();
-
   switch (format) {
-    case FORMAT_TYPE.SVG:
+    case FORMAT_TYPE.SVG: {
+      const svg = window.chart.getSVG();
       fs.writeFileSync(fileOut, svg);
       break;
+    }
     case FORMAT_TYPE.PDF: {
-      // TODO: convert to PDF
-      const doc = new PDFDocument();
+      const svg = window.chart.getSVG();
+      const doc = new PDFDocument({ size: 'A4', layout: 'landscape' });
       const stream = fs.createWriteStream(fileOut);
       SVGtoPDF(doc, svg, 0, 0);
       doc.pipe(stream);
       doc.end();
       break;
     }
-    default:
-    // TODO: convert to PNG/JPG
-    //   const buffer = Buffer.from(svg, 'utf8');
-    //   let sharping = sharp(buffer);
-    //   if (format === FORMAT_TYPE.PNG) sharping = sharping.png();
-    //   else if (format === FORMAT_TYPE.JPEG) sharping = sharping.jpeg();
-    //   else throw new Error(`Unsupported output format ${format}`);
-    //   await sharping.toFile(fileOut);
+    default: {
+      const imageDataUrl = await window.chart.getImageDataUrl(
+        `image/${format === FORMAT_TYPE.PNG ? 'png' : 'jpg'}`
+      );
+      // example: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAAo...'; 
+      const imageData = imageDataUrl.split(',')[1];
+      const image = Buffer.from(imageData,'base64');
+      fs.writeFileSync(fileOut, image);
+
+      // TODO: convert to PNG/JPG
+      //   const buffer = Buffer.from(svg, 'utf8');
+      //   let sharping = sharp(buffer);
+      //   if (format === FORMAT_TYPE.PNG) sharping = sharping.png();
+      //   else if (format === FORMAT_TYPE.JPEG) sharping = sharping.jpeg();
+      //   else throw new Error(`Unsupported output format ${format}`);
+      //   await sharping.toFile(fileOut);
+    }
   }
 
   console.log(`Saved chart to ${fileOut} in '${format.toUpperCase()}' format`);

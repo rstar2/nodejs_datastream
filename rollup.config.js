@@ -1,4 +1,5 @@
 import resolve from '@rollup/plugin-node-resolve';
+// import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
 
@@ -19,7 +20,10 @@ export default {
     format: outputESM ? 'esm' : 'iife',
 
     sourcemap: !production,
+
+    inlineDynamicImports: true,
   },
+  preserveEntrySignatures: false,
   // code-splitting is NOT allowed for single bundle
   manualChunks: outputESM
     ? {
@@ -28,6 +32,7 @@ export default {
     : undefined,
   plugins: [
     resolve(), // find and resolve any Node commonjs module
+    // babel({ babelHelpers: 'bundled', exclude: /node_modules/ }),
     commonjs(), // converts to ES modules
     production && terser(), // minify, but only in production,
   ],
