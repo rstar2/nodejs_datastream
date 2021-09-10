@@ -17,12 +17,9 @@
     "directory-tree": "^2.3.1",
     "highcharts": "^9.2.2",
     "jsdom": "^17.0.0",
-    "jspdf": "^2.3.1",
     "minimist": "^1.2.5",
     "pdfkit": "^0.12.3",
-    "sharp": "^0.29.1",
-    "svg-to-pdfkit": "^0.1.8",
-    "svg2pdf.js": "^2.1.0"
+    "svg-to-pdfkit": "^0.1.8"
   },
   "devDependencies": {
     "@rollup/plugin-babel": "^5.3.0",

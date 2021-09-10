@@ -139,15 +139,6 @@ export async function getImageDataUrl(mimetype = 'image/png', quality = 1) {
 }
 
 /**
- * @return {SVGElement}
- */
-export function getSVGElement() {
-    if (!currentChart) throw new Error('No valid Highcharts chart');
-
-    return currentChart.renderer.boxWrapper.element;
-}
-
-/**
  * Create/update the Highcharts chart for given data
  * @param {{name:string, points: [number, number}[]} listData
  * @param {Object} extraOpts

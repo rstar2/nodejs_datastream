@@ -50,7 +50,9 @@ fileUploadEl.addEventListener('change', async (event) => {
   // show the buttons as they are initially hidden
   exportSVGEl.style.display = '';
   exportPNGEl.style.display = '';
-  exportPDFEl.style.display = '';
+
+  // TODO: Suppressed this PDF export in client as it's not so good
+//   exportPDFEl.style.display = '';
 });
 
 exportSVGEl.addEventListener('click', exportChart);
@@ -82,14 +84,14 @@ async function exportChart(event) {
       break;
     }
     case FORMAT_TYPE.PDF: {
-      extension = 'pdf';
-      mimetype = 'application/pdf';
-
+        throw new Error('Not implemented');
+    //   extension = 'pdf';
+    //   mimetype = 'application/pdf';
+    //
+    //   // this will produce worse results
     //   const image = await svg2png.getCanvas(svg);
     //   data = svg2pdf.getFromImage(image, 'PNG');
-    
     //   data = await svg2pdf.getFromSVG(svg);
-      data = await svg2blob.getFromSVG(svg, {asDataUrl: true});
       break;
     }
   }

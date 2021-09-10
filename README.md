@@ -48,12 +48,11 @@ So all is in run.log (and debug.log)
 
 ## Deploying the web version
 
-The app si hosted by Surge.sh on the data-chart.surge.sh domain
+The web app is hosted by Surge.sh on the data-chart.surge.sh domain.
 
 First ensure the surge CLI is installed with ```npm install -g surge``` and then "login" into Surge.sh with ```surge login```.
 
 Run ```npm run deploy``` in order to upload the public folder to Surge.sh.
-
 
 ## Creating a new release on GitHub - it's done with GitHub Actions
 
@@ -111,7 +110,6 @@ It's good before that ot update the CHANGES.md file.
     1. ~~Integral~~
     1. Split the max 9 files into 3 table with 3 rows each
     1. 🚩️ Fix when usage with JSDOM as then exported SVG is not with correct "heights" as when in the browser, and so this legend is "invisible"
-    1. 🚩️ Fix bundling the "sharp" module with pkg - the addons must be added somehow
 
 1. ~~Test cases with Jest~~
 1. ~~Then add CI (GitHub-Action) that runs the test after each commit-push~~
@@ -119,4 +117,24 @@ It's good before that ot update the CHANGES.md file.
 
 1. Implement "filtering" strategies? Examples:
     - Skip initial "zeros"
-    - Skip "duplicate/overlapping" points, e.g. points like [12, 454] and [12, 467] - use only first/last  
+    - Skip "duplicate/overlapping" points, e.g. points like [12, 454] and [12, 467] - use only first/last
+
+1. Make the Release GitHubAction produce an executable for both Linux and Windows
+
+## Notes
+
+🏳 Could not managed to bundle the 'sharp' module with pkg inside a single executable, so will use the 'canvas' module
+
+How it works:
+The node wrapper opens the uses 'jsdom' to simulate a DOM/browser environment.
+There it loads the webapp (Highcharts and etc..).
+The Highcharts in client can only export a SVG image string.
+
+So the nodejs wrapper will:
+
+- For SVG - just save the SVG received from client
+- For PDF - convert the SVG to PDF using 'pdfkit' and 'svg-to-pdfkit'
+- For PNG/JPG - best is to use 'sharp' but could't managed to bundle with pkg in a single executable
+   So implemented it as the client is reporting the PNG/JPG as image DataUrl, which in browser is supported natively but in order to work in nodejs with 'jsdom' the 'canvas' module has to be imported. The downside is that when bundled in the executable it adds around 80MB-windows (180-linux) more.
+
+🏳 For PDF conversion in the client - if needed real PDF (can use 'jsPDF' and 'svg2pdf.js') otherwise it can be implemented as just inserted image inside but there's no point in that - so this feature is not implemented. Actually Highcharts can converted with their exporting server.

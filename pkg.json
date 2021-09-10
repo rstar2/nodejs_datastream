@@ -9,20 +9,19 @@
       "public/js/main.js",
       "public/css/style.css",
 
-      "comment - needed for sharp - not working yet ",
-      "_node_modules/sharp/build/Release/**/*.node",
-      "_node_modules/sharp/build/Release/**/*.so.*",
-      "_node_modules/sharp/vendor/**/*",
-
-      "comment - needed for canvas - but the exe will become veeery big (with ~180MB more)",
+      "comment - needed for canvas - but the exe will become veeery big (with ~180MB more on Linux, ~80 on Windows)",
       "comment - needed for canvas - also bundling for Linux and Windows cannot be form one machine",
       "node_modules/canvas/build/Release/**/*",
-
 
       "comment - needed for pdfkit ",
       "node_modules/linebreak/src/classes.trie",
       "node_modules/pdfkit/js/data/*",
-      "node_modules/pdfkit/js/font/data/*"
+      "node_modules/pdfkit/js/font/data/*",
+
+      "comment - needed for sharp - could not make it work - have to change the sources https://github.com/vercel/pkg/issues/229#issuecomment-706101999",
+      "_node_modules/sharp/build/Release/**/*.node",
+      "_node_modules/sharp/build/Release/**/*.so.*",
+      "_node_modules/sharp/vendor/**/*"
   ],
   
   "scripts": [
