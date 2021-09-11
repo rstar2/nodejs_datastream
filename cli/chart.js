@@ -1,15 +1,20 @@
 const fs = require('fs');
 const path = require('path');
 
-// const sharp = require('sharp');
-const PDFDocument = require('pdfkit');
-const SVGtoPDF = require('svg-to-pdfkit');
-
-const { title, files, format, fileOut } = require('../lib/args');
-const { parseFile } = require('../lib/parse-fs');
-const { FORMAT_TYPE, getLastName } = require('../lib/util');
-
 const jsdom = require('jsdom');
+
+// const sharp = require('sharp');
+// const PDFDocument = require('pdfkit');
+// const SVGtoPDF = require('svg-to-pdfkit');
+
+const { FORMAT_TYPE, getLastName } = require('../lib/util');
+const {
+  title,
+  files,
+  format = FORMAT_TYPE.SVG,
+  fileOut,
+} = require('../lib/args');
+const { parseFile } = require('../lib/parse-fs');
 
 let window;
 
@@ -37,37 +42,13 @@ async function main() {
 }
 
 async function setupJsdom(fileHtml) {
-  // class CustomResourceLoader extends jsdom.ResourceLoader {
-  //   fetch(url, options) {
-  //     if (options.element) {
-  //       console.log(
-  //         `Element ${options.element.localName} is requesting the url ${url}`
-  //       );
-  //     }
-  //     return super.fetch(url, options);
-  //   }
-  // }
-  // const resourceLoader = new CustomResourceLoader();
-
   // redirect the window's console (e.g. "browsers" console), to the Node's console
   const virtualConsole = new jsdom.VirtualConsole();
   virtualConsole.sendTo(console);
 
-  // NOTE: cannot use the easier jsdom.JSDOM.fromFile() API
-  // as it internally uses the "promise" based "fs module (e.g.  const fs = require("fs").promises)
-  // BUT pkg cannot work with it - there's a bug https://github.com/vercel/pkg/issues/958
-  //   const dom = await jsdom.JSDOM.fromFile(fileHtml, {
-  //     runScripts: 'dangerously',
-  //     resources: 'usable',
-  //     //   resources: resourceLoader,
-  //     virtualConsole,
-  //   });
-
-  const dom = new jsdom.JSDOM(fs.readFileSync(fileHtml), {
-    url: new URL('file:' + path.resolve(fileHtml)),
+  const dom = await jsdom.JSDOM.fromFile(fileHtml, {
     runScripts: 'dangerously',
     resources: 'usable',
-    //   resources: resourceLoader,
     virtualConsole,
   });
 
@@ -200,39 +181,43 @@ async function exportChart(chartData, opts) {
 }
 
 async function convertAndSave() {
-  switch (format) {
-    case FORMAT_TYPE.SVG: {
-      const svg = window.chart.getSVG();
-      fs.writeFileSync(fileOut, svg);
-      break;
-    }
-    case FORMAT_TYPE.PDF: {
-      const svg = window.chart.getSVG();
-      const doc = new PDFDocument({ size: 'A4', layout: 'landscape' });
-      const stream = fs.createWriteStream(fileOut);
-      SVGtoPDF(doc, svg, 0, 0);
-      doc.pipe(stream);
-      doc.end();
-      break;
-    }
-    default: {
-      const imageDataUrl = await window.chart.getImageDataUrl(
-        `image/${format === FORMAT_TYPE.PNG ? 'png' : 'jpg'}`
-      );
-      // example: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAAo...'; 
-      const imageData = imageDataUrl.split(',')[1];
-      const image = Buffer.from(imageData,'base64');
-      fs.writeFileSync(fileOut, image);
+  // 🏳🏳 Latest requirements are so that only SVG is needed
+  //   switch (format) {
+  //     case FORMAT_TYPE.SVG: {
+  //       const svg = window.chart.getSVG();
+  //       fs.writeFileSync(fileOut, svg);
+  //       break;
+  //     }
+  //     case FORMAT_TYPE.PDF: {
+  //       const svg = window.chart.getSVG();
+  //       const doc = new PDFDocument({ size: 'A4', layout: 'landscape' });
+  //       const stream = fs.createWriteStream(fileOut);
+  //       SVGtoPDF(doc, svg, 0, 0);
+  //       doc.pipe(stream);
+  //       doc.end();
+  //       break;
+  //     }
+  //     default: {
+  //       const imageDataUrl = await window.chart.getImageDataUrl(
+  //         `image/${format === FORMAT_TYPE.PNG ? 'png' : 'jpg'}`
+  //       );
+  //       // example: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAAo...';
+  //       const imageData = imageDataUrl.split(',')[1];
+  //       const image = Buffer.from(imageData, 'base64');
+  //       fs.writeFileSync(fileOut, image);
 
-      // TODO: convert to PNG/JPG
-      //   const buffer = Buffer.from(svg, 'utf8');
-      //   let sharping = sharp(buffer);
-      //   if (format === FORMAT_TYPE.PNG) sharping = sharping.png();
-      //   else if (format === FORMAT_TYPE.JPEG) sharping = sharping.jpeg();
-      //   else throw new Error(`Unsupported output format ${format}`);
-      //   await sharping.toFile(fileOut);
-    }
-  }
+  //       //   // convert to PNG/JPG using 'sharp'
+  //       //   const buffer = Buffer.from(svg, 'utf8');
+  //       //   let sharping = sharp(buffer);
+  //       //   if (format === FORMAT_TYPE.PNG) sharping = sharping.png();
+  //       //   else if (format === FORMAT_TYPE.JPEG) sharping = sharping.jpeg();
+  //       //   else throw new Error(`Unsupported output format ${format}`);
+  //       //   await sharping.toFile(fileOut);
+  //     }
+  //   }
+
+  const svg = window.chart.getSVG();
+  fs.writeFileSync(fileOut, svg);
 
   console.log(`Saved chart to ${fileOut} in '${format.toUpperCase()}' format`);
 }

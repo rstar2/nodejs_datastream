@@ -58,7 +58,7 @@ export async function getFromSVG(
  * @return {Promise<HTMLImageElement>|HTMLCanvasElement}
  */
 export async function getCanvas(svg) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const image = new Image();
 
     image.onload = function () {

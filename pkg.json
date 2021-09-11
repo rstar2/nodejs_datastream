@@ -6,17 +6,18 @@
   "assets": [
       "comment - local statc files, used later by jsdom",
       "public/index.html",
-      "public/js/main.js",
+      "public/js/bundle.js",
       "public/css/style.css",
 
+      "comment - needed for canvas -  NOT NEEDED FOR NOW",
       "comment - needed for canvas - but the exe will become veeery big (with ~180MB more on Linux, ~80 on Windows)",
       "comment - needed for canvas - also bundling for Linux and Windows cannot be form one machine",
-      "node_modules/canvas/build/Release/**/*",
+      "_node_modules/canvas/build/Release/**/*",
 
-      "comment - needed for pdfkit ",
-      "node_modules/linebreak/src/classes.trie",
-      "node_modules/pdfkit/js/data/*",
-      "node_modules/pdfkit/js/font/data/*",
+      "comment - needed for pdfkit - NOT NEEDED FOR NOW",
+      "_node_modules/linebreak/src/classes.trie",
+      "_node_modules/pdfkit/js/data/*",
+      "_node_modules/pdfkit/js/font/data/*",
 
       "comment - needed for sharp - could not make it work - have to change the sources https://github.com/vercel/pkg/issues/229#issuecomment-706101999",
       "_node_modules/sharp/build/Release/**/*.node",

@@ -52,7 +52,7 @@ fileUploadEl.addEventListener('change', async (event) => {
   exportPNGEl.style.display = '';
 
   // TODO: Suppressed this PDF export in client as it's not so good
-//   exportPDFEl.style.display = '';
+  //   exportPDFEl.style.display = '';
 });
 
 exportSVGEl.addEventListener('click', exportChart);
@@ -80,19 +80,19 @@ async function exportChart(event) {
     case FORMAT_TYPE.PNG: {
       extension = 'png';
       mimetype = 'image/png';
-      data = await svg2blob.getFromSVG(svg, {mimetype, quality: 1});
+      data = await svg2blob.getFromSVG(svg, { mimetype, quality: 1 });
       break;
     }
     case FORMAT_TYPE.PDF: {
-        throw new Error('Not implemented');
-    //   extension = 'pdf';
-    //   mimetype = 'application/pdf';
-    //
-    //   // this will produce worse results
-    //   const image = await svg2png.getCanvas(svg);
-    //   data = svg2pdf.getFromImage(image, 'PNG');
-    //   data = await svg2pdf.getFromSVG(svg);
-      break;
+      throw new Error('Not implemented');
+      //   extension = 'pdf';
+      //   mimetype = 'application/pdf';
+      //
+      //   // this will produce worse results
+      //   const image = await svg2png.getCanvas(svg);
+      //   data = svg2pdf.getFromImage(image, 'PNG');
+      //   data = await svg2pdf.getFromSVG(svg);
+      //   break;
     }
   }
 

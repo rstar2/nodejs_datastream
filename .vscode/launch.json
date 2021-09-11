@@ -21,7 +21,7 @@
         // "cwd": "${relativeFileDirname}"
         "args": [
           "data",
-          "-n=cli-chart",
+          "-n=dist/chart-folder",
           "-f=svg"
         ]
     },
@@ -34,7 +34,7 @@
         // "cwd": "${relativeFileDirname}"
         "args": [
           "data/hp1.txt",
-          "-n=dist/chart",
+          "-n=dist/chart-single",
           "-f=png"
         ]
     },
@@ -46,7 +46,7 @@
         "program": "cli/chart.js",
         // "cwd": "${relativeFileDirname}"
         "args": [
-          "-n=cli-chart",
+          "-n=dist/chart-many",
           "-f=svg",
           "data/CAPTURE_11.TXT",
           "data/CAPTURE_12.TXT",

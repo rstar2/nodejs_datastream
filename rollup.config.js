@@ -9,10 +9,14 @@ const production = !process.env.ROLLUP_WATCH;
 
 const outputESM = false;
 
+/**
+ * @type {import('rollup').RollupOptions}
+ */
 export default {
   input: 'src/main.js',
   output: {
-    dir: 'public/js',
+    //dir: 'public/js',
+    file: 'public/js/bundle.js',
 
     // IIFE (immediately-invoked function expression) - suitable for <script> tags
     //     and only supported for single bundle, NOT with Code-splitting builds

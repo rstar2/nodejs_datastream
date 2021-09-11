@@ -108,7 +108,7 @@ It's good before that ot update the CHANGES.md file.
 1. ~~Add "legend"/meta-data info below the chart~~
     1. ~~Max point~~
     1. ~~Integral~~
-    1. Split the max 9 files into 3 table with 3 rows each
+    1. ? Split the max 9 files into 3 table with 3 rows each ?
     1. 🚩️ Fix when usage with JSDOM as then exported SVG is not with correct "heights" as when in the browser, and so this legend is "invisible"
 
 1. ~~Test cases with Jest~~
@@ -119,7 +119,8 @@ It's good before that ot update the CHANGES.md file.
     - Skip initial "zeros"
     - Skip "duplicate/overlapping" points, e.g. points like [12, 454] and [12, 467] - use only first/last
 
-1. Make the Release GitHubAction produce an executable for both Linux and Windows
+1. ~~Make the Release GitHubAction produce an executable for both Linux and Windows~~
+    > Not needed for now as no binaries will be packaged in the executable (no need for server conversion for now, SVG is enough)
 
 ## Notes
 
@@ -138,3 +139,5 @@ So the nodejs wrapper will:
    So implemented it as the client is reporting the PNG/JPG as image DataUrl, which in browser is supported natively but in order to work in nodejs with 'jsdom' the 'canvas' module has to be imported. The downside is that when bundled in the executable it adds around 80MB-windows (180-linux) more.
 
 🏳 For PDF conversion in the client - if needed real PDF (can use 'jsPDF' and 'svg2pdf.js') otherwise it can be implemented as just inserted image inside but there's no point in that - so this feature is not implemented. Actually Highcharts can converted with their exporting server.
+
+🏳🏳 Latest requirements are so that only SVG is needed (no other conversion in server side), so remove 'canvas', 'pdfkit' and 'svg-to-pdfkit' modules.

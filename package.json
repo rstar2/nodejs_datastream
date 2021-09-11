@@ -12,14 +12,11 @@
     "deploy": "npm run build && surge ./public --domain data-chart.surge.sh"
   },
   "dependencies": {
-    "canvas": "^2.8.0",
     "deepmerge": "^4.2.2",
     "directory-tree": "^2.3.1",
     "highcharts": "^9.2.2",
     "jsdom": "^17.0.0",
-    "minimist": "^1.2.5",
-    "pdfkit": "^0.12.3",
-    "svg-to-pdfkit": "^0.1.8"
+    "minimist": "^1.2.5"
   },
   "devDependencies": {
     "@rollup/plugin-babel": "^5.3.0",

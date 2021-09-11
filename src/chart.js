@@ -62,15 +62,16 @@ const defOptions = {
   chart: {
     // A5 page size - 595 pixels x 842 pixels in screen resolution
     // TODO: Get dimensions of a normal A4 page format
-    width: 1000,
+    // width: 1000,
     // TODO: this is problematic - should be dynamic, and it will hide the caption
-    height: 675,
+    // height: 675,
     // type: 'line',
     // zoomType: 'x',
     // scrollablePlotArea: {
     //   minWidth: 100,
     //   scrollPositionX: 1,
     // },
+    plotBorderWidth: 1,
   },
   xAxis: {
     title: {
@@ -82,8 +83,9 @@ const defOptions = {
       format: '{value} mm',
     },
     scrollbar: {
-      enabled: true,
+      enabled: false,
     },
+    min: 0,
     // tickLength: 0,
   },
 
@@ -100,7 +102,6 @@ const defOptions = {
         return `${this.value / 1000} kN`;
       },
     },
-    lineWidth: 1,
   },
 };
 
@@ -130,12 +131,12 @@ export function getSVG() {
 }
 
 /**
- * @param {string} mimetype 
- * @param {string} quality 
+ * @param {string} mimetype
+ * @param {string} quality
  * @return {string}
  */
 export async function getImageDataUrl(mimetype = 'image/png', quality = 1) {
-    return svg2blob.getFromSVG(getSVG(), {mimetype, quality, asDataUrl: true});
+  return svg2blob.getFromSVG(getSVG(), { mimetype, quality, asDataUrl: true });
 }
 
 /**
@@ -220,12 +221,22 @@ function createCaptionHtml(charts) {
   // but when exporting the styles are missing - so used inline styles
   const style = `style="border: 1px solid darkgrey;border-collapse: collapse; padding: 5px"`;
 
-  const rows = charts.map(
-    ({ series: { name }, max, integral }) =>
-      `<tr><td ${style}>${name}</td><td ${style}>${max} mm</td><td ${style}>${integral} kJ</td></tr>`
-  );
+  let sum = {
+    max: 0,
+    integral: 0,
+  };
+  const rows = charts.map(({ series: { name }, max, integral }) => {
+    sum.max += max;
+    sum.integral += integral;
+    return `<tr><td ${style}>${name}</td><td ${style}>${max}</td><td ${style}>${integral}</td></tr>`;
+  });
+  const rowAverage = `<tr><td ${style}>Average</td><td ${style}>${
+    sum.max / charts.length
+  }</td>
+  <td ${style}>${sum.integral / charts.length}</td></tr>`;
   return `<table ${style}>
-  <tr><th ${style}>Name</th><th ${style}>Max</th><th ${style}>Integral</th></tr>
+  <tr><th ${style}>Name</th><th ${style}>Max Force [kN]</th><th ${style}>Integral [kJ]</th></tr>
   ${rows.join('')}
+  ${rowAverage}
   </table>`;
 }
