@@ -60,18 +60,14 @@ const defOptions = {
     // enabled: false,
   },
   chart: {
-    // A5 page size - 595 pixels x 842 pixels in screen resolution
-    // TODO: Get dimensions of a normal A4 page format
-    // width: 1000,
-    // TODO: this is problematic - should be dynamic, and it will hide the caption
-    // height: 675,
-    // type: 'line',
-    // zoomType: 'x',
-    // scrollablePlotArea: {
-    //   minWidth: 100,
-    //   scrollPositionX: 1,
-    // },
     plotBorderWidth: 1,
+
+    // useful for tests
+    // borderWidth: 2,
+
+    // A4 page size - 595 pixels x 842 pixels in screen resolution
+    width: 1000,
+    height: 675,
   },
   xAxis: {
     title: {
@@ -81,9 +77,6 @@ const defOptions = {
     },
     labels: {
       format: '{value} mm',
-    },
-    scrollbar: {
-      enabled: false,
     },
     min: 0,
     // tickLength: 0,
@@ -102,6 +95,7 @@ const defOptions = {
         return `${this.value / 1000} kN`;
       },
     },
+    // lineWidth: 1,
   },
 };
 
@@ -142,9 +136,12 @@ export async function getImageDataUrl(mimetype = 'image/png', quality = 1) {
 /**
  * Create/update the Highcharts chart for given data
  * @param {{name:string, points: [number, number}[]} listData
- * @param {Object} extraOpts
+ * @param {{title: string, isJSDOM:boolean, isCaptionInSVG: boolean}} extraOpts
  */
-export function update(listData, { title } = {}) {
+export function update(
+  listData,
+  { title, isJSDOM = false, isCaptionInSVG = true } = {}
+) {
   // destroy any previous chart (to avoid memory leaks)
   if (currentChart) currentChart.destroy();
 
@@ -186,17 +183,40 @@ export function update(listData, { title } = {}) {
     };
   });
 
-  const /* Highcharts.Options */ opts = merge.all([
+  // TODO: ❓ make it dynamic doesn't need to be in one A4 page
+  let heightChart = defOptions.chart.height;
+
+  const heightLine = createCaptionSVG.heightLine;
+  // for single chart the caption will be 2 lines (Max, Integral),
+  // for many charts it will be (1 (table-header) + charts.length + 1 (average)) lines
+  let heightCaption =
+    heightLine * (charts.length === 1 ? 2 : charts.length + 2);
+  const marginCaption = 100;
+
+  const /* Highcharts.Options */ opts1 = merge.all([
       defOptions,
       {
         series: charts.map((chart) => chart.series),
 
+        chart: {
+          events: {
+            // when the chart is loaded render the caption (with max/integral) as SVG
+            load: function () {
+              isCaptionInSVG &&
+                createCaptionSVG(this, charts, heightChart - heightCaption);
+            },
+          },
+          marginBottom: isCaptionInSVG
+            ? heightCaption + marginCaption
+            : undefined,
+        },
         title: {
           text: title,
         },
         caption: {
           ...defOptions.caption,
-          text: createCaptionHtml(charts),
+          enabled: !isCaptionInSVG,
+          text: !isCaptionInSVG ? createCaptionHtml(charts) : undefined,
         },
         // if single chart then no need to set a name as it's same as the title
         legend: {
@@ -204,18 +224,19 @@ export function update(listData, { title } = {}) {
         },
       },
     ]);
-  currentChart = Highcharts.chart('myHighcharts', opts);
+
+  currentChart = Highcharts.chart('myHighcharts', opts1);
 }
 
 /**
  *
- * @param {{name: string, max: number, integral: number}[]} charts
+ * @param {{series: {name: string}, max: number, integral: number}[]} charts
  */
 function createCaptionHtml(charts) {
   //  NOTE: Don't use <hr> as it cannot be exported for some reason as proper SVG (so later PNG conversion fails)
   // for single chart -no need to render as table
   if (charts.length === 1)
-    return `<div>Max: <b>${charts[0].max} mm</b> </div><div> Integral: <b>${charts[0].integral} kJ</b></div>`;
+    return `<div>Max Force: <b>${charts[0].max} kN</b> </div><div> Integral: <b>${charts[0].integral} kJ</b></div>`;
 
   // NOTE: Cannot use global CSS style (like for instance some class) as it looks fine in browser
   // but when exporting the styles are missing - so used inline styles
@@ -240,3 +261,133 @@ function createCaptionHtml(charts) {
   ${rowAverage}
   </table>`;
 }
+
+/**
+ * Create the data table
+ * @param {Highcharts.Chart} currentChart
+ * @param {{series: {name:string}, max:number, integral: number}[]} charts
+ * @param {number} top
+ */
+function createCaptionSVG({ renderer }, charts, top) {
+  // user options
+  const tableTop = top,
+    colWidth = 150,
+    tableLeft = 20,
+    rowHeight = 20,
+    cellPadding = 2.5;
+
+  let cellLeft = tableLeft;
+
+  const textCSS = { color: '#666666', fill: '#666666' };
+  const textBoldCSS = { ...textCSS, fontWeight: 'bold' };
+
+  if (charts.length === 1) {
+    renderer
+      .text(`Max Force: ${charts[0].max} kN`, cellLeft + cellPadding, tableTop)
+      .css(textBoldCSS)
+      .add();
+    renderer
+      .text(
+        `Integral: ${charts[0].integral} kJ`,
+        cellLeft + cellPadding,
+        tableTop + rowHeight
+      )
+      .css(textBoldCSS)
+      .add();
+    return;
+  }
+
+  let sum = {
+    max: 0,
+    integral: 0,
+  };
+
+  // first column
+  charts.forEach(({ series: { name } }, i) => {
+    renderer
+      .text(
+        // cut the string as it must fit in 150px,
+        // it depends on the concrete chars ("111" is not same width as "WWW")
+        // but after trying 18 chars max is ok for max
+        name.substr(0, 18),
+        cellLeft + cellPadding,
+        tableTop + (i + 1) * rowHeight - cellPadding
+      )
+      .css(textCSS)
+      .add();
+  });
+  renderer
+    .text(
+      'Average',
+      cellLeft + cellPadding,
+      tableTop + (charts.length + 1) * rowHeight - cellPadding
+    )
+    .css(textBoldCSS)
+    .add();
+
+  // second column
+  cellLeft += colWidth;
+  renderer
+    .text('Max Force [kN]', cellLeft + cellPadding, tableTop - cellPadding)
+    .css(textBoldCSS)
+    .add();
+  charts.forEach(({ max }, i) => {
+    sum.max += max;
+    renderer
+      .text(
+        max,
+        cellLeft + cellPadding,
+        tableTop + (i + 1) * rowHeight - cellPadding
+      )
+      .css(textCSS)
+      .add();
+  });
+  renderer
+    .text(
+      sum.max / charts.length,
+      cellLeft + cellPadding,
+      tableTop + (charts.length + 1) * rowHeight - cellPadding
+    )
+    .css(textBoldCSS)
+    .add();
+
+  // third column
+  cellLeft += colWidth;
+  renderer
+    .text('Integral [kJ]', cellLeft + cellPadding, tableTop - cellPadding)
+    .css(textBoldCSS)
+    .add();
+  charts.forEach(({ integral }, i) => {
+    sum.integral += integral;
+    renderer
+      .text(
+        integral,
+        cellLeft + cellPadding,
+        tableTop + (i + 1) * rowHeight - cellPadding
+      )
+      .css(textCSS)
+      .add();
+  });
+  renderer
+    .text(
+      sum.integral / charts.length,
+      cellLeft + cellPadding,
+      tableTop + (charts.length + 1) * rowHeight - cellPadding
+    )
+    .css(textBoldCSS)
+    .add();
+}
+createCaptionSVG.heightLine = 20;
+
+// /**
+//  * Draw a single line in the table
+//  */
+// function createTableLine(renderer, x1, y1, x2, y2) {
+//   renderer
+//     .path(['M', x1, y1, 'L', x2, y2])
+//     .attr({
+//       stroke: 'silver',
+//       'stroke-width': 1,
+//     })
+//     .add();
+// }

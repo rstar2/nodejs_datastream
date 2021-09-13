@@ -4,7 +4,7 @@
 
 - Support for multiple datastream files
 - Support for a folder as source of multiple datastream files
-- Support for export chart to PDF format
+- Add max/integral as caption inside the SVG image
 
 ## v1.0.0
 

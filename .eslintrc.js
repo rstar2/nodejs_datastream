@@ -12,5 +12,5 @@ module.exports = {
   extends: ['eslint:recommended', 'prettier', 'plugin:prettier/recommended'],
   plugins: ['prettier'],
   // add your custom rules here
-  rules: {},
+  rules: { 'prettier/prettier': ['error', { endOfLine: 'auto' }] },
 };

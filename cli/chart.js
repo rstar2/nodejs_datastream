@@ -38,7 +38,7 @@ async function main() {
     .filter((result) => result.status === 'fulfilled')
     .map((result) => result.value);
 
-  await exportChart(listData, { title });
+  await exportChart(listData, { title, isJSDOM: true, isCaptionInSVG: true });
 }
 
 async function setupJsdom(fileHtml) {

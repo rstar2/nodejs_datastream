@@ -77,6 +77,8 @@ git push origin tag v1.0.0
 
 Notes if needed t delete a tag:
 
+List local tags ```git tag --list```
+
 Delete local tag:  ```git tag -d v1.0.0```
 
 Delete remote tag: ```git push origin tag --delete v1.0.0```
@@ -109,13 +111,18 @@ It's good before that ot update the CHANGES.md file.
     1. ~~Max point~~
     1. ~~Integral~~
     1. ? Split the max 9 files into 3 table with 3 rows each ?
-    1. 🚩️ Fix when usage with JSDOM as then exported SVG is not with correct "heights" as when in the browser, and so this legend is "invisible"
+    1. ~~Fix when usage with JSDOM as then exported SVG is not with correct "heights" as when in the browser, and so this legend is "invisible"~~
+        > Problem is not JSDOM but the \<foreignObject\> element inside the \<svg>, and the caption (with the max/integral values) is such.
+        Even a "correct" SVG image exported from the browser is not properly rendered in a image-viewer application as it will also not recognize the \<foreignObject\> and skip it.
+        So don't render the caption as HTML but render it inside as SVG.
+        See https://www.highcharts.com/forum/viewtopic.php?t=39093 and example in
+        http://jsfiddle.net/highcharts/z9zXM/
 
 1. ~~Test cases with Jest~~
 1. ~~Then add CI (GitHub-Action) that runs the test after each commit-push~~
     > Created .github/workflows/test.yml GitHub-Action
 
-1. Implement "filtering" strategies? Examples:
+1. ❓Implement "filtering" strategies? Examples:
     - Skip initial "zeros"
     - Skip "duplicate/overlapping" points, e.g. points like [12, 454] and [12, 467] - use only first/last
 

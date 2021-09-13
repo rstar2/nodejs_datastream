@@ -4,8 +4,15 @@ body {
     font-weight: 300;
 }
 
+#myHighcharts {
+    margin-top: 20px;
+}
+
 @media print {
     #fileUpload, #fileSelect, #exportSVG, #exportPNG {
         display: none;
+    }
+    #myHighcharts {
+        margin-top: 0;
     }
 }
