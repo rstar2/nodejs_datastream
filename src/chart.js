@@ -164,9 +164,6 @@ export function update(
       }
     });
 
-    // round to 2nd point
-    integral = Math.round((integral / 1000 + Number.EPSILON) * 100) / 100;
-
     return {
       // this will be passed to Highcharts
       series: {
@@ -236,7 +233,12 @@ function createCaptionHtml(charts) {
   //  NOTE: Don't use <hr> as it cannot be exported for some reason as proper SVG (so later PNG conversion fails)
   // for single chart -no need to render as table
   if (charts.length === 1)
-    return `<div>Max Force: <b>${charts[0].max} kN</b> </div><div> Integral: <b>${charts[0].integral} kJ</b></div>`;
+    return `<div>Max Force: <b>${
+      charts[0].max
+    } kN</b> </div><div> Integral: <b>${round(
+      charts[0].integral,
+      2
+    )} kJ</b></div>`;
 
   // NOTE: Cannot use global CSS style (like for instance some class) as it looks fine in browser
   // but when exporting the styles are missing - so used inline styles
@@ -251,10 +253,11 @@ function createCaptionHtml(charts) {
     sum.integral += integral;
     return `<tr><td ${style}>${name}</td><td ${style}>${max}</td><td ${style}>${integral}</td></tr>`;
   });
-  const rowAverage = `<tr><td ${style}>Average</td><td ${style}>${
-    sum.max / charts.length
-  }</td>
-  <td ${style}>${sum.integral / charts.length}</td></tr>`;
+  const rowAverage = `<tr><td ${style}>Average</td><td ${style}>${round(
+    sum.max / charts.length,
+    2
+  )}</td>
+  <td ${style}>${round(sum.integral / charts.length, 2)}</td></tr>`;
   return `<table ${style}>
   <tr><th ${style}>Name</th><th ${style}>Max Force [kN]</th><th ${style}>Integral [kJ]</th></tr>
   ${rows.join('')}
@@ -288,7 +291,7 @@ function createCaptionSVG({ renderer }, charts, top) {
       .add();
     renderer
       .text(
-        `Integral: ${charts[0].integral} kJ`,
+        `Integral: ${round(charts[0].integral, 2)} kJ`,
         cellLeft + cellPadding,
         tableTop + rowHeight
       )
@@ -344,7 +347,7 @@ function createCaptionSVG({ renderer }, charts, top) {
   });
   renderer
     .text(
-      sum.max / charts.length,
+      round(sum.max / charts.length, 2),
       cellLeft + cellPadding,
       tableTop + (charts.length + 1) * rowHeight - cellPadding
     )
@@ -370,7 +373,7 @@ function createCaptionSVG({ renderer }, charts, top) {
   });
   renderer
     .text(
-      sum.integral / charts.length,
+      round(sum.integral / charts.length, 2),
       cellLeft + cellPadding,
       tableTop + (charts.length + 1) * rowHeight - cellPadding
     )
@@ -391,3 +394,17 @@ createCaptionSVG.heightLine = 20;
 //     })
 //     .add();
 // }
+
+/**
+ * Example:
+ *    round(123,1313213123,1)  => 123,1
+ *    round(123,1313213123,2)  => 123,13
+ *    round(123,1313213123,3)  => 123,131
+ * @param {number} num
+ * @param {number} precision
+ */
+function round(num, precision = 2) {
+  // round to 2nd point
+  const del = 10 * precision;
+  return Math.round((num + Number.EPSILON) * del) / del;
+}
