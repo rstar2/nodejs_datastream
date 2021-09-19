@@ -1,5 +1,10 @@
 # Changes in this Release
 
+## v3.0.0
+
+- Use Node.js 12 as it is supported on Windows7
+
+
 ## v2.0.0
 
 - Support for multiple datastream files
