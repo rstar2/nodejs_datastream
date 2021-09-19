@@ -233,9 +233,10 @@ function createCaptionHtml(charts) {
   //  NOTE: Don't use <hr> as it cannot be exported for some reason as proper SVG (so later PNG conversion fails)
   // for single chart -no need to render as table
   if (charts.length === 1)
-    return `<div>Max Force: <b>${
-      charts[0].max
-    } kN</b> </div><div> Integral: <b>${round(
+    return `<div>Max Force: <b>${round(
+      charts[0].max,
+      3
+    )} kN</b> </div><div> Integral: <b>${round(
       charts[0].integral,
       2
     )} kJ</b></div>`;
@@ -289,7 +290,11 @@ function createCaptionSVG({ renderer }, charts, top) {
 
   if (charts.length === 1) {
     renderer
-      .text(`Max Force: ${charts[0].max} kN`, cellLeft + cellPadding, tableTop)
+      .text(
+        `Max Force: ${round(charts[0].max, 3)} kN`,
+        cellLeft + cellPadding,
+        tableTop
+      )
       .css(textBoldCSS)
       .add();
     renderer
@@ -408,6 +413,6 @@ createCaptionSVG.heightLine = 20;
  */
 function round(num, precision = 2) {
   // round to 2nd point
-  const del = 10 * precision;
+  const del = Math.pow(10, precision);
   return Math.round((num + Number.EPSILON) * del) / del;
 }
