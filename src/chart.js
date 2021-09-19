@@ -176,7 +176,7 @@ export function update(
 
       // these are needed for the caption text
       max,
-      integral,
+      integral: integral / 1000,
     };
   });
 
@@ -251,7 +251,10 @@ function createCaptionHtml(charts) {
   const rows = charts.map(({ series: { name }, max, integral }) => {
     sum.max += max;
     sum.integral += integral;
-    return `<tr><td ${style}>${name}</td><td ${style}>${max}</td><td ${style}>${integral}</td></tr>`;
+    return `<tr><td ${style}>${name}</td><td ${style}>${round(
+      max,
+      3
+    )}</td><td ${style}>${round(integral)}</td></tr>`;
   });
   const rowAverage = `<tr><td ${style}>Average</td><td ${style}>${round(
     sum.max / charts.length,
@@ -338,7 +341,7 @@ function createCaptionSVG({ renderer }, charts, top) {
     sum.max += max;
     renderer
       .text(
-        max,
+        round(max, 3),
         cellLeft + cellPadding,
         tableTop + (i + 1) * rowHeight - cellPadding
       )
@@ -347,7 +350,7 @@ function createCaptionSVG({ renderer }, charts, top) {
   });
   renderer
     .text(
-      round(sum.max / charts.length, 2),
+      round(sum.max / charts.length, 3),
       cellLeft + cellPadding,
       tableTop + (charts.length + 1) * rowHeight - cellPadding
     )
@@ -364,7 +367,7 @@ function createCaptionSVG({ renderer }, charts, top) {
     sum.integral += integral;
     renderer
       .text(
-        integral,
+        round(integral),
         cellLeft + cellPadding,
         tableTop + (i + 1) * rowHeight - cellPadding
       )
@@ -373,7 +376,7 @@ function createCaptionSVG({ renderer }, charts, top) {
   });
   renderer
     .text(
-      round(sum.integral / charts.length, 2),
+      round(sum.integral / charts.length),
       cellLeft + cellPadding,
       tableTop + (charts.length + 1) * rowHeight - cellPadding
     )
