@@ -93,10 +93,9 @@ It's good before that ot update the CHANGES.md file.
 
 ## TODO
 
-1. ~~CLI - Create arguments parsing (format, strategy, ...). Add help message~~
+1. ~~CLI - Create arguments parsing (format, ...). Add help message~~
 1. ~~Support multiple datastream files~~ - NOT NEEDED for now
 1. ~~Convert output SVG to PNG or JPEG format~~
-1. ~~Add filter strategies:  skip the "initial" and later "backwards" points (strategy or middleware pattern, or even using RxJS)~~ - NOT NEEDED for now
 1. ~~Use highcharts NPM module~~
 1. ~~Split Rollup bundles to vendor and app/local~~
     > Technically not possible until JSDOM supports loading of ES modules (e.g. ```<script type="module">```)
@@ -121,10 +120,6 @@ It's good before that ot update the CHANGES.md file.
 1. ~~Test cases with Jest~~
 1. ~~Then add CI (GitHub-Action) that runs the test after each commit-push~~
     > Created .github/workflows/test.yml GitHub-Action
-
-1. ❓Implement "filtering" strategies? Examples:
-    - Skip initial "zeros"
-    - Skip "duplicate/overlapping" points, e.g. points like [12, 454] and [12, 467] - use only first/last
 
 1. ~~Make the Release GitHubAction produce an executable for both Linux and Windows~~
     > Not needed for now as no binaries will be packaged in the executable (no need for server conversion for now, SVG is enough)
