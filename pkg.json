@@ -9,6 +9,9 @@
       "public/js/bundle.js",
       "public/css/style.css",
 
+      "comment - this is not actually needed by jsdom, but here is the logo",
+      "public/img/etem-gestamp-logo-dataurl.txt",
+
       "comment - needed for canvas -  NOT NEEDED FOR NOW",
       "comment - needed for canvas - but the exe will become veeery big (with ~180MB more on Linux, ~80 on Windows)",
       "comment - needed for canvas - also bundling for Linux and Windows cannot be form one machine",

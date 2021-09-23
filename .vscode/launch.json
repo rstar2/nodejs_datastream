@@ -22,7 +22,8 @@
         "args": [
           "data",
           "-n=dist/chart-folder",
-          "-f=svg"
+          "-f=svg",
+          "-m=3pt"
         ]
     },
     {
@@ -35,7 +36,7 @@
         "args": [
           "data/hp1.txt",
           "-n=dist/chart-single",
-          "-f=png"
+          "-f=png",
         ]
     },
     {
@@ -48,6 +49,7 @@
         "args": [
           "-n=dist/chart-many",
           "-f=svg",
+          "-m=3pt",
           "data/CAPTURE_11.TXT",
           "data/CAPTURE_12.TXT",
           "data/CAPTURE_12xxx.TXT",

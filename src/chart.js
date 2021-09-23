@@ -29,15 +29,31 @@ const defOptions = {
     allowHTML: true,
     fallbackToExportServer: false,
   },
+  colors: [
+    '#058DC7',
+    '#50B432',
+    '#ED561B',
+    '#DDDF00',
+    '#24CBE5',
+    '#64E572',
+    '#FF9655',
+    '#FFF263',
+    '#6AF9C4',
+  ],
   title: {
-    text: 'Title', // this is dynamic value set later
+    text: '%title%', // this is dynamic value set later
   },
   //   subtitle: {
   //     text: 'Subtitle',
   //   },
   credits: {
     // this is by default in right-bottom corner
-    text: '<b>Electric Turbo</b>',
+    text: '<b>%credits%</b>', // this is dynamic value set later
+    style: {
+      color: '#999999',
+      cursor: 'pointer',
+      fontSize: '12px',
+    },
     position: {
       y: -20,
     },
@@ -45,7 +61,7 @@ const defOptions = {
   caption: {
     // add custom text below
     useHTML: true,
-    text: 'Caption', // this is dynamic value set later
+    text: '%caption%', // this is dynamic value set later
     align: 'left',
     x: 50,
     y: 20,
@@ -55,9 +71,13 @@ const defOptions = {
     verticalAlign: 'top',
     borderWidth: 0,
     x: 60,
-
-    // if needed to not show the legend text
-    // enabled: false,
+    enabled: false,
+  },
+  plotOptions: {
+    series: {
+      // if needed to not show the legend text - for 'series' type legend.enable=false is not enough
+      showInLegend: false,
+    },
   },
   chart: {
     plotBorderWidth: 1,
@@ -72,11 +92,11 @@ const defOptions = {
   xAxis: {
     title: {
       enabled: true,
-      text: 'Displacement',
+      text: 'Displacement [mm]',
       margin: 10,
     },
     labels: {
-      format: '{value} mm',
+      format: '{value}',
     },
     min: 0,
     // tickLength: 0,
@@ -85,14 +105,12 @@ const defOptions = {
   yAxis: {
     title: {
       enabled: true,
-      text: 'Force',
+      text: 'Force [kN]',
     },
     labels: {
       // format: '{value} kN',
       formatter() {
-        if (this.value < 1000) return `${this.value} N`;
-
-        return `${this.value / 1000} kN`;
+        return `${this.value / 1000}`;
       },
     },
     // lineWidth: 1,
@@ -136,30 +154,40 @@ export async function getImageDataUrl(mimetype = 'image/png', quality = 1) {
 /**
  * Create/update the Highcharts chart for given data
  * @param {{name:string, points: [number, number}[]} listData
- * @param {{title: string, isJSDOM:boolean, isCaptionInSVG: boolean}} extraOpts
+ * @param {{title: string, credits: string,
+ * logo?: {dataUrl: string, width: number, height?: number}, isJSDOM:boolean,
+ * isCaptionInSVG: boolean, isWithDisplacement: boolean}} extraOpts
  */
 export function update(
   listData,
-  { title, isJSDOM = false, isCaptionInSVG = true } = {}
+  {
+    title,
+    credits,
+    isJSDOM = false,
+    logo = undefined,
+    isCaptionInSVG = true,
+    isWithDisplacement = false,
+  } = {}
 ) {
   // destroy any previous chart (to avoid memory leaks)
   if (currentChart) currentChart.destroy();
 
   const charts = listData.map(({ points, name }) => {
-    let max = 0;
+    let maxD = 0;
+    let maxF = 0;
     // Implement this "integral"
     let integral = 0;
     // points = points.splice(points.length - 20);
     points.forEach((point, index) => {
       // search the max
+      const x = point[0];
       const y = point[1];
-      if (y > max) max = y;
+      if (x > maxD) maxD = x;
+      if (y > maxF) maxF = y;
 
       if (index > 0) {
-        const x = point[0];
         const oldX = points[index - 1][0];
         const oldY = points[index - 1][1];
-
         integral += ((x - oldX) * (y + oldY)) / 2;
       }
     });
@@ -175,19 +203,16 @@ export function update(
       },
 
       // these are needed for the caption text
-      max,
+      maxD,
+      maxF,
       integral: integral / 1000,
     };
   });
 
-  // TODO: ❓ make it dynamic doesn't need to be in one A4 page
-  let heightChart = defOptions.chart.height;
-
-  const heightLine = createCaptionSVG.heightLine;
-  // for single chart the caption will be 2 lines (Max, Integral),
-  // for many charts it will be (1 (table-header) + charts.length + 1 (average)) lines
-  let heightCaption =
-    heightLine * (charts.length === 1 ? 2 : charts.length + 2);
+  // TODO: ❓ make it dynamic if doesn't need to be in one A4 page
+  const widthChart = defOptions.chart.width;
+  const heightChart = defOptions.chart.height;
+  const heightCaption = createCaptionSVG.calcHeight(charts.length);
   const marginCaption = 100;
 
   const /* Highcharts.Options */ opts1 = merge.all([
@@ -199,8 +224,18 @@ export function update(
           events: {
             // when the chart is loaded render the caption (with max/integral) as SVG
             load: function () {
+              // render the caption (in this case the table with series names)
               isCaptionInSVG &&
-                createCaptionSVG(this, charts, heightChart - heightCaption);
+                createCaptionSVG(
+                  this,
+                  charts,
+                  heightChart - heightCaption,
+                  isWithDisplacement
+                );
+
+              // render log in place of the credits
+              logo &&
+                createLogo(this, logo, heightChart - heightCaption, widthChart);
             },
           },
           marginBottom: isCaptionInSVG
@@ -208,7 +243,11 @@ export function update(
             : undefined,
         },
         title: {
-          text: title,
+          text: defOptions.title.text.replace('%title%', title),
+        },
+        credits: {
+          enabled: !logo,
+          text: defOptions.credits.text.replace('%credits%', credits),
         },
         caption: {
           ...defOptions.caption,
@@ -233,13 +272,10 @@ function createCaptionHtml(charts) {
   //  NOTE: Don't use <hr> as it cannot be exported for some reason as proper SVG (so later PNG conversion fails)
   // for single chart -no need to render as table
   if (charts.length === 1)
-    return `<div>Max Force: <b>${round(
+    return `<div>Fmax: <b>${round(
       charts[0].max,
       3
-    )} kN</b> </div><div> Integral: <b>${round(
-      charts[0].integral,
-      2
-    )} kJ</b></div>`;
+    )} kN</b> </div><div>Ea: <b>${round(charts[0].integral, 2)} kJ</b></div>`;
 
   // NOTE: Cannot use global CSS style (like for instance some class) as it looks fine in browser
   // but when exporting the styles are missing - so used inline styles
@@ -263,53 +299,43 @@ function createCaptionHtml(charts) {
   )}</td>
   <td ${style}>${round(sum.integral / charts.length, 2)}</td></tr>`;
   return `<table ${style}>
-  <tr><th ${style}>Name</th><th ${style}>Max Force [kN]</th><th ${style}>Integral [kJ]</th></tr>
+  <tr><th ${style}>Name</th><th ${style}>Fmax [kN]</th><th ${style}>Ea [kJ]</th></tr>
   ${rows.join('')}
   ${rowAverage}
   </table>`;
 }
 
 /**
- * Create the data table
+ * Create the caption table
  * @param {Highcharts.Chart} currentChart
- * @param {{series: {name:string}, max:number, integral: number}[]} charts
+ * @param {{series: {name:string}, maxF:number, maxD:number, integral: number}[]} charts
  * @param {number} top
+ * @param {boolean} withColumnDisplacement
  */
-function createCaptionSVG({ renderer }, charts, top) {
+function createCaptionSVG(
+  { renderer, options },
+  charts,
+  top,
+  withColumnDisplacement = false
+) {
   // user options
   const tableTop = top,
-    colWidth = 150,
+    colWidthName = 180,
+    colWidthFMax = 100,
+    colWidthEa = 100,
     tableLeft = 20,
-    rowHeight = 20,
+    rowHeight = createCaptionSVG.heightLine,
     cellPadding = 2.5;
 
   let cellLeft = tableLeft;
 
+  // these must be always cloned as they get merged in some cases
   const textCSS = { color: '#666666', fill: '#666666' };
   const textBoldCSS = { ...textCSS, fontWeight: 'bold' };
 
-  if (charts.length === 1) {
-    renderer
-      .text(
-        `Max Force: ${round(charts[0].max, 3)} kN`,
-        cellLeft + cellPadding,
-        tableTop
-      )
-      .css(textBoldCSS)
-      .add();
-    renderer
-      .text(
-        `Integral: ${round(charts[0].integral, 2)} kJ`,
-        cellLeft + cellPadding,
-        tableTop + rowHeight
-      )
-      .css(textBoldCSS)
-      .add();
-    return;
-  }
-
   let sum = {
-    max: 0,
+    maxF: 0,
+    maxD: 0,
     integral: 0,
   };
 
@@ -320,52 +346,57 @@ function createCaptionSVG({ renderer }, charts, top) {
         // cut the string as it must fit in 150px,
         // it depends on the concrete chars ("111" is not same width as "WWW")
         // but after trying 18 chars max is ok for max
-        name.substr(0, 18),
+        name.substr(0, 23),
         cellLeft + cellPadding,
         tableTop + (i + 1) * rowHeight - cellPadding
       )
-      .css(textCSS)
+      .css({ ...textCSS, color: options.colors[i] })
       .add();
   });
-  renderer
-    .text(
-      'Average',
-      cellLeft + cellPadding,
-      tableTop + (charts.length + 1) * rowHeight - cellPadding
-    )
-    .css(textBoldCSS)
-    .add();
-
-  // second column
-  cellLeft += colWidth;
-  renderer
-    .text('Max Force [kN]', cellLeft + cellPadding, tableTop - cellPadding)
-    .css(textBoldCSS)
-    .add();
-  charts.forEach(({ max }, i) => {
-    sum.max += max;
+  if (charts.length > 1) {
     renderer
       .text(
-        round(max, 3),
+        'Average',
+        cellLeft + cellPadding,
+        tableTop + (charts.length + 1) * rowHeight - cellPadding
+      )
+      .css(textBoldCSS)
+      .add();
+  }
+
+  // second column
+  cellLeft += colWidthName;
+  renderer
+    .text('Fmax [kN]', cellLeft + cellPadding, tableTop - cellPadding)
+    .css(textBoldCSS)
+    .add();
+  charts.forEach(({ maxF }, i) => {
+    sum.maxF += maxF;
+    renderer
+      .text(
+        round(maxF, 3),
         cellLeft + cellPadding,
         tableTop + (i + 1) * rowHeight - cellPadding
       )
       .css(textCSS)
+      //   .css({ ...textCSS, color: options.colors[i] })
       .add();
   });
-  renderer
-    .text(
-      round(sum.max / charts.length, 3),
-      cellLeft + cellPadding,
-      tableTop + (charts.length + 1) * rowHeight - cellPadding
-    )
-    .css(textBoldCSS)
-    .add();
+  if (charts.length > 1) {
+    renderer
+      .text(
+        round(sum.maxF / charts.length, 3),
+        cellLeft + cellPadding,
+        tableTop + (charts.length + 1) * rowHeight - cellPadding
+      )
+      .css(textBoldCSS)
+      .add();
+  }
 
   // third column
-  cellLeft += colWidth;
+  cellLeft += colWidthFMax;
   renderer
-    .text('Integral [kJ]', cellLeft + cellPadding, tableTop - cellPadding)
+    .text('Ea [kJ]', cellLeft + cellPadding, tableTop - cellPadding)
     .css(textBoldCSS)
     .add();
   charts.forEach(({ integral }, i) => {
@@ -377,18 +408,62 @@ function createCaptionSVG({ renderer }, charts, top) {
         tableTop + (i + 1) * rowHeight - cellPadding
       )
       .css(textCSS)
+      //   .css({ ...textCSS, color: options.colors[i] })
       .add();
   });
-  renderer
-    .text(
-      round(sum.integral / charts.length),
-      cellLeft + cellPadding,
-      tableTop + (charts.length + 1) * rowHeight - cellPadding
-    )
-    .css(textBoldCSS)
-    .add();
+  if (charts.length > 1) {
+    renderer
+      .text(
+        round(sum.integral / charts.length),
+        cellLeft + cellPadding,
+        tableTop + (charts.length + 1) * rowHeight - cellPadding
+      )
+      .css(textBoldCSS)
+      .add();
+  }
+
+  if (withColumnDisplacement) {
+    // fourth column
+    cellLeft += colWidthEa;
+    renderer
+      .text('Dmax [mm]', cellLeft + cellPadding, tableTop - cellPadding)
+      .css(textBoldCSS)
+      .add();
+    charts.forEach(({ maxD }, i) => {
+      sum.maxD += maxD;
+      renderer
+        .text(
+          round(maxD, 3),
+          cellLeft + cellPadding,
+          tableTop + (i + 1) * rowHeight - cellPadding
+        )
+        .css(textCSS)
+        //   .css({ ...textCSS, color: options.colors[i] })
+        .add();
+    });
+    if (charts.length > 1) {
+      renderer
+        .text(
+          round(sum.maxD / charts.length, 3),
+          cellLeft + cellPadding,
+          tableTop + (charts.length + 1) * rowHeight - cellPadding
+        )
+        .css(textBoldCSS)
+        .add();
+    }
+  }
 }
 createCaptionSVG.heightLine = 20;
+/**
+ * Calculate the height of the caption
+ * @param {number} charts
+ * @returns
+ */
+createCaptionSVG.calcHeight = (charts) => {
+  // for single chart the caption will be with 1 extra line line (table-header)
+  // for multiple charts it will be with 2 extra lines (table-header + average)
+  return createCaptionSVG.heightLine * (charts + (charts === 1 ? 1 : 2));
+};
 
 // /**
 //  * Draw a single line in the table
@@ -402,6 +477,28 @@ createCaptionSVG.heightLine = 20;
 //     })
 //     .add();
 // }
+
+/**
+ * Create the logo
+ * @param {Highcharts.Chart} currentChart
+ * @param {{dataUrl: string, width: number, height?: number}} logo
+ * @param {number} top
+ * @param {number} chartWidth
+ */
+function createLogo({ renderer }, logo, top, chartWidth) {
+  const svgEl = renderer
+    .image(
+      logo.dataUrl,
+      chartWidth - logo.width,
+      top - 20,
+      logo.width,
+      logo.height || 0
+    )
+    .add();
+
+  // the height has to be removed from the internal SVG/HTML element so it can be relative to the width
+  if (!logo.height) svgEl.element.removeAttribute('height');
+}
 
 /**
  * Example:

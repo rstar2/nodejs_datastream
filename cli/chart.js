@@ -7,13 +7,8 @@ const jsdom = require('jsdom');
 // const PDFDocument = require('pdfkit');
 // const SVGtoPDF = require('svg-to-pdfkit');
 
-const { FORMAT_TYPE, getLastName } = require('../lib/util');
-const {
-  title,
-  files,
-  format = FORMAT_TYPE.SVG,
-  fileOut,
-} = require('../lib/args');
+const { getLastName, MODE_CHART } = require('../lib/util');
+const { title, credits, files, format, mode, fileOut } = require('../lib/args');
 const { parseFile } = require('../lib/parse-fs');
 
 let window;
@@ -38,7 +33,21 @@ async function main() {
     .filter((result) => result.status === 'fulfilled')
     .map((result) => result.value);
 
-  await exportChart(listData, { title, isJSDOM: true, isCaptionInSVG: true });
+  // the logo height must be specified also, otherwise some normal image viewer apps
+  // will not be able to show it while the browsers don't have problem
+  const logoDataUrl = await fs.readFileSync(
+    path.join(__dirname, '../public/img/etem-gestamp-logo-dataurl.txt'),
+    { encoding: 'utf8' }
+  );
+
+  await exportChart(listData, {
+    isJSDOM: true,
+    title,
+    credits,
+    logo: { dataUrl: logoDataUrl, width: 250, height: 57.5 },
+    isCaptionInSVG: true,
+    isWithDisplacement: mode === MODE_CHART.THREE_POINT_BENDING,
+  });
 }
 
 async function setupJsdom(fileHtml) {

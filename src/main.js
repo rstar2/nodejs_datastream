@@ -42,8 +42,15 @@ fileUploadEl.addEventListener('change', async (event) => {
     });
   //   console.log('data', data);
 
+  const logoDataUrl = await svg2blob.getFromUrl('/img/etem-gestamp-logo.png', {
+    asDataUrl: true,
+  });
+
   chart.update(listData, {
-    title: listData.length === 1 ? listData[0].name : undefined,
+    // title: listData.length === 1 ? listData[0].name : undefined,
+    title: 'Quasi static compression test',
+    credits: 'Etem / Gestamp',
+    logo: { dataUrl: logoDataUrl, width: 250 },
   });
 
   // the built-in export is enough,

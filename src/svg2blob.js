@@ -9,14 +9,14 @@ export function getSVGImageDataUrl(svg) {
 
 /**
  * Will only work in browsers, for jsdom the 'canvas' module is required
- * @param {string} svg
+ * @param {string} imgSrl
  * @param {string} mimetype
  * @param {number} quality
  * @param {boolean} asDataUrl
  * @return {Promise<Blob|string>}
  */
-export async function getFromSVG(
-  svg,
+export async function getFromUrl(
+  imgSrl,
   { mimetype = 'image/png', quality = 0.92, asDataUrl = false } = {}
 ) {
   return new Promise((resolve, reject) => {
@@ -48,8 +48,20 @@ export async function getFromSVG(
       }
     };
 
-    image.src = getSVGImageDataUrl(svg);
+    image.src = imgSrl;
   });
+}
+
+/**
+ * Will only work in browsers, for jsdom the 'canvas' module is required
+ * @param {string} svg
+ * @param {string} mimetype
+ * @param {number} quality
+ * @param {boolean} asDataUrl
+ * @return {Promise<Blob|string>}
+ */
+export async function getFromSVG(svg, opts) {
+  return getFromUrl(getSVGImageDataUrl(svg), opts);
 }
 
 /**
