@@ -110,7 +110,7 @@ const defOptions = {
     labels: {
       // format: '{value} kN',
       formatter() {
-        return `${this.value / 1000}`;
+        return `${this.value}`;
       },
     },
     // lineWidth: 1,
@@ -318,9 +318,16 @@ function createCaptionSVG(
   top,
   withColumnDisplacement = false
 ) {
-  // user options
+  // find the name with max chars
+  let maxName = 0;
+  charts.forEach(
+    ({ series: { name } }) => (maxName = Math.max(name.length, maxName))
+  );
+  maxName = Math.min(maxName, createCaptionSVG.maxName);
+
+  // table options
   const tableTop = top,
-    colWidthName = 180,
+    colWidthName = maxName * createCaptionSVG.charWidth,
     colWidthFMax = 100,
     colWidthEa = 100,
     tableLeft = 20,
@@ -346,7 +353,7 @@ function createCaptionSVG(
         // cut the string as it must fit in 150px,
         // it depends on the concrete chars ("111" is not same width as "WWW")
         // but after trying 18 chars max is ok for max
-        name.substr(0, 23),
+        name.substr(0, createCaptionSVG.maxName),
         cellLeft + cellPadding,
         tableTop + (i + 1) * rowHeight - cellPadding
       )
@@ -453,6 +460,8 @@ function createCaptionSVG(
     }
   }
 }
+createCaptionSVG.maxName = 50 + 4; // 4 is for the extension
+createCaptionSVG.charWidth = 9; // by testing, 10 is safer but 
 createCaptionSVG.heightLine = 20;
 /**
  * Calculate the height of the caption
