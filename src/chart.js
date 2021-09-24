@@ -433,7 +433,7 @@ function createCaptionSVG(
     // fourth column
     cellLeft += colWidthEa;
     renderer
-      .text('Dmax [mm]', cellLeft + cellPadding, tableTop - cellPadding)
+      .text('lmax [mm]', cellLeft + cellPadding, tableTop - cellPadding)
       .css(textBoldCSS)
       .add();
     charts.forEach(({ maxD }, i) => {
