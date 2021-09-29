@@ -29,6 +29,7 @@ const defOptions = {
     allowHTML: true,
     fallbackToExportServer: false,
   },
+  //  add at least 20 colors
   colors: [
     '#058DC7',
     '#50B432',
@@ -39,6 +40,19 @@ const defOptions = {
     '#FF9655',
     '#FFF263',
     '#6AF9C4',
+
+    '#4572A7',
+    '#AA4643',
+    '#89A54E',
+    '#80699B',
+    '#3D96AE',
+    '#DB843D',
+    '#92A8CD',
+    '#A47D7C',
+    '#B5CA92',
+
+    '#f45b5b',
+    '#91e8e1',
   ],
   title: {
     text: '%title%', // this is dynamic value set later
@@ -209,11 +223,11 @@ export function update(
     };
   });
 
-  // TODO: ❓ make it dynamic if doesn't need to be in one A4 page
   const widthChart = defOptions.chart.width;
-  const heightChart = defOptions.chart.height;
+  let heightChart = defOptions.chart.height;
   const heightCaption = createCaptionSVG.calcHeight(charts.length);
   const marginCaption = 100;
+  heightChart = heightChart + marginCaption + heightCaption;
 
   const /* Highcharts.Options */ opts1 = merge.all([
       defOptions,
@@ -238,6 +252,7 @@ export function update(
                 createLogo(this, logo, heightChart - heightCaption, widthChart);
             },
           },
+          height: heightChart,
           marginBottom: isCaptionInSVG
             ? heightCaption + marginCaption
             : undefined,
@@ -461,7 +476,7 @@ function createCaptionSVG(
   }
 }
 createCaptionSVG.maxName = 50 + 4; // 4 is for the extension
-createCaptionSVG.charWidth = 9; // by testing, 10 is safer but 
+createCaptionSVG.charWidth = 9; // by testing, 10 is safer but
 createCaptionSVG.heightLine = 20;
 /**
  * Calculate the height of the caption

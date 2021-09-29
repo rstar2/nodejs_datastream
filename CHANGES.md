@@ -1,5 +1,9 @@
 # Changes in this Release
 
+## v3.1.1
+
+- Allow support to up to 20 files - so add 20 different chart-colors
+
 ## v3.1.0
 
 - Add logo support
