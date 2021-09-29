@@ -81,7 +81,9 @@ List local tags ```git tag --list```
 
 Delete local tag:  ```git tag -d v1.0.0```
 
-Delete remote tag: ```git push origin tag --delete v1.0.0```
+List remote tags ```git ls-remote --tags origin```
+
+Delete remote tag: ```git push --delete origin tag v1.0.0```
 
 It's good before that ot update the CHANGES.md file.
 
